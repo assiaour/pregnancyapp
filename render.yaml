@@ -1,0 +1,15 @@
+# Render Blueprint: deploy the API only (server folder)
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: pregnancy-app-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: MONGODB_URI
+        sync: false
+        # Set in Render Dashboard → Environment (from MongoDB Atlas or Render MongoDB)

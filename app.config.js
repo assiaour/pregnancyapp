@@ -1,0 +1,31 @@
+export default {
+  expo: {
+    scheme: "pregnancyapp",
+    platforms: ["ios", "android"],
+    name: "Pregnancy App",
+    slug: "pregnancy-app",
+    version: "1.0.0",
+    orientation: "portrait",
+    icon: "./assets/icon.png",
+    userInterfaceStyle: "light",
+    splash: {
+      image: "./assets/splash.png",
+      resizeMode: "contain",
+      backgroundColor: "#ffffff",
+    },
+    assetBundlePatterns: ["**/*"],
+    extra: {
+      EXPO_PUBLIC_GOOGLE_CLIENT_ID:
+        process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID ||
+        "", // Or paste your Client ID here: "xxx.apps.googleusercontent.com"
+    },
+    ios: { supportsTablet: true },
+    android: {
+      adaptiveIcon: {
+        foregroundImage: "./assets/adaptive-icon.png",
+        backgroundColor: "#ffffff",
+      },
+    },
+    web: { favicon: "./assets/favicon.png" },
+  },
+};
