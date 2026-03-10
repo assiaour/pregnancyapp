@@ -9,17 +9,44 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useUser } from '../context/UserContext';
+import { getAccount } from '../api';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
+  const { login } = useUser();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    // Add your login logic here
-    console.log('Login', { email, password });
+  const handleLogin = async () => {
+    setError('');
+    if (!email.trim() || !password.trim()) {
+      setError('Please enter email and password.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const account = await getAccount(email.trim());
+      if (!account) {
+        setError('Account not found.');
+        return;
+      }
+      if (account.password !== password) {
+        setError('Invalid password.');
+        return;
+      }
+      login(account.mail, account.ddr, account.semaineGrossesse);
+      navigation.replace('MainTabs');
+    } catch (e) {
+      setError(e.message || 'Login failed.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -66,8 +93,9 @@ export default function LoginScreen() {
                 style={styles.loginButton}
                 onPress={handleLogin}
                 activeOpacity={0.8}
+                disabled={loading}
               >
-                <Text style={styles.loginButtonText}>Login</Text>
+                {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.loginButtonText}>Login</Text>}
               </TouchableOpacity>
             </View>
 
@@ -114,6 +142,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 36,
   },
+  errorText: { color: '#B84A4A', fontSize: 14, marginBottom: 12, textAlign: 'center' },
   form: {
     marginBottom: 24,
   },

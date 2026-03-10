@@ -8,9 +8,11 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useUser } from '../context/UserContext';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+  const { login } = useUser();
 
   const handleCreateAccount = () => {
     navigation.navigate('CreateAccount');
@@ -18,6 +20,11 @@ export default function HomeScreen() {
 
   const handleLogin = () => {
     navigation.navigate('Login');
+  };
+
+  const handleContinueToApp = () => {
+    login('demo@test.com', '01/09/2024', 27);
+    navigation.replace('MainTabs');
   };
 
   return (
@@ -53,6 +60,14 @@ export default function HomeScreen() {
             activeOpacity={0.8}
           >
             <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.demoButton]}
+            onPress={handleContinueToApp}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.buttonText}>Continue to App (Demo)</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -112,6 +127,9 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: '#6B7B8C',
+  },
+  demoButton: {
+    backgroundColor: '#9B8AC4',
   },
   buttonText: {
     color: '#fff',

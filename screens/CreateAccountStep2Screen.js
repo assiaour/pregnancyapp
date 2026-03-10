@@ -45,7 +45,7 @@ const TYPES_ACCOUCHEMENT = [
 export default function CreateAccountStep2Screen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { nom, dateNaissance, mail, nombreEnfants } = route.params || {};
+  const { nom, dateNaissance, mail, nombreEnfants, username, password } = route.params || {};
 
   const [ddr, setDdr] = useState('');
   const [nombreGrossessesPrecedentes, setNombreGrossessesPrecedentes] = useState('');
@@ -95,6 +95,8 @@ export default function CreateAccountStep2Screen() {
       dateNaissance,
       mail,
       nombreEnfants,
+      username,
+      password,
       ddr,
       nombreGrossessesPrecedentes,
       nombreAccouchements,

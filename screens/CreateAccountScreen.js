@@ -18,6 +18,8 @@ export default function CreateAccountScreen() {
   const [dateNaissance, setDateNaissance] = useState('');
   const [mail, setMail] = useState('');
   const [nombreEnfants, setNombreEnfants] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleNext = () => {
@@ -34,6 +36,18 @@ export default function CreateAccountScreen() {
       setError('Veuillez entrer votre email.');
       return;
     }
+    if (!username.trim()) {
+      setError("Veuillez choisir un nom d'utilisateur.");
+      return;
+    }
+    if (!password) {
+      setError('Veuillez saisir un mot de passe.');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Le mot de passe doit contenir au moins 6 caractères.');
+      return;
+    }
     const n = parseInt(nombreEnfants, 10);
     if (nombreEnfants === '' || isNaN(n) || n < 0) {
       setError('Veuillez entrer le nombre d\'enfants (0 ou plus).');
@@ -44,6 +58,8 @@ export default function CreateAccountScreen() {
       dateNaissance: dateNaissance.trim(),
       mail: mail.trim(),
       nombreEnfants: n,
+      username: username.trim(),
+      password,
     });
   };
 
@@ -94,6 +110,26 @@ export default function CreateAccountScreen() {
                 onChangeText={setMail}
                 keyboardType="email-address"
                 autoCapitalize="none"
+              />
+
+              <Text style={styles.label}>Nom d'utilisateur</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Nom d'utilisateur"
+                placeholderTextColor="#9B8AC4"
+                value={username}
+                onChangeText={setUsername}
+                autoCapitalize="none"
+              />
+
+              <Text style={styles.label}>Mot de passe</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Mot de passe"
+                placeholderTextColor="#9B8AC4"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
               />
 
               <Text style={styles.label}>Nombre d'enfants</Text>
