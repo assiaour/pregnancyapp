@@ -66,6 +66,8 @@ export default function LoginScreen() {
               Welcome back! Please sign in to continue.
             </Text>
 
+            {!!error && <Text style={styles.errorText}>{error}</Text>}
+
             <View style={styles.form}>
               <Text style={styles.label}>Email</Text>
               <TextInput
@@ -115,7 +117,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F0FA',
+    backgroundColor: '#EDECF9',
   },
   keyboardView: {
     flex: 1,
@@ -126,60 +128,73 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   content: {
-    paddingHorizontal: 30,
+    paddingHorizontal: 32,
     alignItems: 'stretch',
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#4A3F6B',
-    marginBottom: 10,
+    fontWeight: '800',
+    color: '#1A1824',
+    marginBottom: 8,
     textAlign: 'center',
+    letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 16,
-    color: '#7B68B8',
+    color: '#8A8696',
+    fontWeight: '500',
     textAlign: 'center',
-    marginBottom: 36,
+    marginBottom: 40,
   },
-  errorText: { color: '#B84A4A', fontSize: 14, marginBottom: 12, textAlign: 'center' },
+  errorText: {
+    color: '#F44336',
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 16,
+    textAlign: 'center'
+  },
   form: {
-    marginBottom: 24,
+    marginBottom: 32,
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#5A4A7B',
+    fontWeight: '700',
+    color: '#4A4656',
     marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   input: {
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#D4C8E8',
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     fontSize: 16,
-    color: '#333',
-    marginBottom: 20,
+    color: '#1A1824',
+    marginBottom: 24,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
   loginButton: {
-    backgroundColor: '#7B68B8',
+    backgroundColor: '#9A75F0',
     paddingVertical: 18,
-    borderRadius: 12,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 8,
-    shadowColor: '#7B68B8',
+    marginTop: 16,
+    shadowColor: '#8C72FF',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 6,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   loginButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '700',
   },
   backButton: {
     alignSelf: 'center',
@@ -188,7 +203,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 16,
-    color: '#7B68B8',
+    color: '#8A8696',
     fontWeight: '600',
   },
 });

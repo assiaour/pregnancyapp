@@ -25,9 +25,13 @@ export function weeksAndDaysFromDDR(ddrDate) {
   const diff = today.getTime() - d.getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   if (days < 0) return null;
-  const week = Math.floor(days / 7);
-  const day = days % 7;
-  return { week, day, totalDays: days };
+
+  // Cap at 41 weeks (41 * 7 days)
+  const cappedDays = Math.min(days, 41 * 7);
+
+  const week = Math.floor(cappedDays / 7);
+  const day = cappedDays % 7;
+  return { week, day, totalDays: cappedDays };
 }
 
 export function weeksFromDDR(ddrDate) {

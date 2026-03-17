@@ -21,12 +21,12 @@ export default function ArticleDetailScreen() {
   useEffect(() => {
     if (!id) {
       setLoading(false);
-      setArticle({ title: 'Article', content: 'Content not found.', category: '-' });
+      setArticle({ title: 'Article', content: 'Contenu introuvable.', category: '-' });
       return;
     }
     getArticle(id)
       .then(setArticle)
-      .catch(() => setArticle({ title: 'Error', content: 'Could not load article.', category: '-' }))
+      .catch(() => setArticle({ title: 'Erreur', content: 'Impossible de charger l\'article.', category: '-' }))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -34,7 +34,7 @@ export default function ArticleDetailScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#7B68B8" />
+          <ActivityIndicator size="large" color="#9A75F0" />
         </View>
       </SafeAreaView>
     );
@@ -43,27 +43,95 @@ export default function ArticleDetailScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Text style={styles.backBtnText}>← Back</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} activeOpacity={0.8}>
+          <Text style={styles.backBtnText}>&lt; Retour</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.category}>{article?.category}</Text>
-        <Text style={styles.title}>{article?.title}</Text>
-        <Text style={styles.content}>{article?.content}</Text>
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <View style={styles.card}>
+          <View style={styles.categoryBadge}>
+            <Text style={styles.category}>{article?.category}</Text>
+          </View>
+          <Text style={styles.title}>{article?.title}</Text>
+          <Text style={styles.content}>{article?.content}</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F0FA' },
+  container: { flex: 1, backgroundColor: '#EDECF9' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header: { padding: 16, borderBottomWidth: 1, borderBottomColor: '#D4C8E8' },
-  backBtn: { padding: 8 },
-  backBtnText: { fontSize: 16, color: '#7B68B8', fontWeight: '600' },
-  scroll: { padding: 20 },
-  category: { fontSize: 14, color: '#7B68B8', marginBottom: 8 },
-  title: { fontSize: 24, fontWeight: '700', color: '#4A3F6B', marginBottom: 16 },
-  content: { fontSize: 16, color: '#5A4A7B', lineHeight: 24 },
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backBtn: {
+    padding: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  backBtnText: {
+    fontSize: 15,
+    color: '#1A1824',
+    fontWeight: '700',
+  },
+  scroll: {
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    paddingBottom: 60,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 32,
+    padding: 24,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
+    minHeight: 500,
+  },
+  categoryBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#F5F3FF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  category: {
+    fontSize: 13,
+    color: '#9A75F0',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#1A1824',
+    marginBottom: 24,
+    letterSpacing: -0.5,
+    lineHeight: 34,
+  },
+  content: {
+    fontSize: 16,
+    color: '#4A4656',
+    lineHeight: 28,
+    fontWeight: '500',
+  },
 });

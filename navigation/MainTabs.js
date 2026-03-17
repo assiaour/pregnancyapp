@@ -49,23 +49,81 @@ function ArticlesStackScreen() {
   );
 }
 
-const tabIcon = (emoji) => () => <Text style={{ fontSize: 22 }}>{emoji}</Text>;
+const tabIcon = (emoji, isFocused) => (
+  <Text style={{
+    fontSize: isFocused ? 24 : 20,
+    opacity: isFocused ? 1 : 0.5,
+    marginTop: 4
+  }}>
+    {emoji}
+  </Text>
+);
 
 export default function MainTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#7B68B8',
-        tabBarInactiveTintColor: '#9B8AC4',
-        tabBarStyle: { backgroundColor: '#fff', borderTopColor: '#D4C8E8' },
+        tabBarActiveTintColor: '#9A75F0',
+        tabBarInactiveTintColor: '#8A8696',
+        tabBarStyle: {
+          backgroundColor: '#FFFFFF',
+          borderTopWidth: 0,
+          elevation: 16,
+          shadowColor: '#8C72FF',
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.1,
+          shadowRadius: 16,
+          height: 64,
+          paddingBottom: 8,
+          paddingTop: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        }
       }}
     >
-      <Tab.Screen name="Home" component={HomeStackScreen} options={{ tabBarLabel: 'Home', tabBarIcon: tabIcon('🏠') }} />
-      <Tab.Screen name="Tools" component={ToolsStackScreen} options={{ tabBarLabel: 'Tools', tabBarIcon: tabIcon('🔧') }} />
-      <Tab.Screen name="Articles" component={ArticlesStackScreen} options={{ tabBarLabel: 'Articles', tabBarIcon: tabIcon('📚') }} />
-      <Tab.Screen name="Chat" component={ChatScreen} options={{ tabBarLabel: 'Chat', tabBarIcon: tabIcon('💬') }} />
-      <Tab.Screen name="Profile" component={AccountScreen} options={{ tabBarLabel: 'Profile', tabBarIcon: tabIcon('👤') }} />
+      <Tab.Screen
+        name="Home"
+        component={HomeStackScreen}
+        options={{
+          tabBarLabel: 'Accueil',
+          tabBarIcon: ({ focused }) => tabIcon('🌟', focused)
+        }}
+      />
+      <Tab.Screen
+        name="Tools"
+        component={ToolsStackScreen}
+        options={{
+          tabBarLabel: 'Outils',
+          tabBarIcon: ({ focused }) => tabIcon('🧩', focused)
+        }}
+      />
+      <Tab.Screen
+        name="Articles"
+        component={ArticlesStackScreen}
+        options={{
+          tabBarLabel: 'Articles',
+          tabBarIcon: ({ focused }) => tabIcon('📰', focused)
+        }}
+      />
+      <Tab.Screen
+        name="Chat"
+        component={ChatScreen}
+        options={{
+          tabBarLabel: 'Assistant',
+          tabBarIcon: ({ focused }) => tabIcon('💬', focused)
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={AccountScreen}
+        options={{
+          tabBarLabel: 'Profil',
+          tabBarIcon: ({ focused }) => tabIcon('👤', focused)
+        }}
+      />
     </Tab.Navigator>
   );
 }

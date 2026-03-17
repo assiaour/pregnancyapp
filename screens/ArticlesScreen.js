@@ -11,7 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { getArticles } from '../api';
 
-const CATEGORIES = ['All', 'Nutrition', 'Symptoms', 'Baby Development', 'Health', 'Exercise', 'Mental health'];
+const CATEGORIES = ['Tous', 'Nutrition', 'Symptômes', 'Développement du bébé', 'Santé', 'Exercice', 'Santé mentale'];
 
 export default function ArticlesScreen() {
   const navigation = useNavigation();
@@ -21,7 +21,7 @@ export default function ArticlesScreen() {
 
   useEffect(() => {
     setLoading(true);
-    const cat = category === 'All' ? null : category;
+    const cat = category === 'Tous' ? null : category;
     getArticles(cat)
       .then(setArticles)
       .catch(() => setArticles([]))
@@ -29,33 +29,37 @@ export default function ArticlesScreen() {
   }, [category]);
 
   const data = articles.length > 0 ? articles : [
-    { _id: '1', title: 'Foods to Avoid During Pregnancy', content: 'Learn which foods to avoid...', category: 'Nutrition' },
-    { _id: '2', title: 'Managing Morning Sickness', content: 'Tips for managing nausea...', category: 'Symptoms' },
-    { _id: '3', title: 'First Trimester Development', content: 'What happens in weeks 1-12...', category: 'Baby Development' },
+    { _id: '1', title: 'Aliments à éviter pendant la grossesse', content: 'Découvrez quels aliments éviter...', category: 'Nutrition' },
+    { _id: '2', title: 'Gérer les nausées matinales', content: 'Conseils pour gérer les nausées...', category: 'Symptômes' },
+    { _id: '3', title: 'Développement du premier trimestre', content: 'Ce qui se passe de la semaine 1 à 12...', category: 'Développement du bébé' },
   ];
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Articles</Text>
-      <FlatList
-        horizontal
-        data={CATEGORIES}
-        keyExtractor={(item) => item}
-        style={styles.categories}
-        contentContainerStyle={styles.categoriesContent}
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[styles.catChip, category === item && styles.catChipSelected]}
-            onPress={() => setCategory(item)}
-          >
-            <Text style={[styles.catChipText, category === item && styles.catChipTextSelected]}>{item}</Text>
-          </TouchableOpacity>
-        )}
-      />
+      <View style={styles.headerContainer}>
+        <Text style={styles.title}>Articles</Text>
+      </View>
+      <View style={{ height: 60 }}>
+        <FlatList
+          horizontal
+          data={CATEGORIES}
+          keyExtractor={(item) => item}
+          style={styles.categories}
+          contentContainerStyle={styles.categoriesContent}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[styles.catChip, category === item && styles.catChipSelected]}
+              onPress={() => setCategory(item)}
+            >
+              <Text style={[styles.catChipText, category === item && styles.catChipTextSelected]}>{item}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#7B68B8" />
+          <ActivityIndicator size="large" color="#9A75F0" />
         </View>
       ) : (
         <FlatList
@@ -68,9 +72,11 @@ export default function ArticlesScreen() {
               onPress={() => navigation.navigate('ArticleDetail', { id: item._id || item.id })}
               activeOpacity={0.8}
             >
+              <View style={styles.cardCategoryBadge}>
+                <Text style={styles.cardCategory}>{item.category}</Text>
+              </View>
               <Text style={styles.cardTitle}>{item.title}</Text>
               <Text style={styles.cardPreview} numberOfLines={2}>{item.content}</Text>
-              <Text style={styles.cardCategory}>{item.category}</Text>
             </TouchableOpacity>
           )}
         />
@@ -80,33 +86,72 @@ export default function ArticlesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F0FA' },
-  title: { fontSize: 24, fontWeight: '700', color: '#4A3F6B', margin: 20, marginBottom: 8 },
-  categories: { maxHeight: 50, marginBottom: 8 },
-  categoriesContent: { paddingHorizontal: 20, gap: 10 },
+  container: { flex: 1, backgroundColor: '#EDECF9' },
+  headerContainer: {
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 16,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#1A1824',
+    letterSpacing: -0.5,
+  },
+  categories: { maxHeight: 50, marginBottom: 16 },
+  categoriesContent: { paddingHorizontal: 24, gap: 12 },
   catChip: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#D4C8E8',
-    backgroundColor: '#fff',
-    marginRight: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    marginRight: 8,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+    justifyContent: 'center',
   },
-  catChipSelected: { borderColor: '#7B68B8', backgroundColor: '#7B68B8' },
-  catChipText: { fontSize: 14, color: '#5A4A7B', fontWeight: '600' },
-  catChipTextSelected: { color: '#fff' },
+  catChipSelected: { backgroundColor: '#9A75F0' },
+  catChipText: { fontSize: 14, color: '#4A4656', fontWeight: '700' },
+  catChipTextSelected: { color: '#FFFFFF' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  list: { padding: 20, paddingTop: 8 },
+  list: { paddingHorizontal: 24, paddingBottom: 60 },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
     padding: 20,
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: '#D4C8E8',
+    marginBottom: 16,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
   },
-  cardTitle: { fontSize: 17, fontWeight: '600', color: '#4A3F6B' },
-  cardPreview: { fontSize: 14, color: '#7B68B8', marginTop: 8 },
-  cardCategory: { fontSize: 12, color: '#9B8AC4', marginTop: 8 },
+  cardCategoryBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#F5F3FF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  cardCategory: {
+    fontSize: 12,
+    color: '#9A75F0',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1A1824',
+    marginBottom: 8,
+  },
+  cardPreview: {
+    fontSize: 14,
+    color: '#8A8696',
+    lineHeight: 20,
+  },
 });

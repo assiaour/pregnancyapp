@@ -59,7 +59,7 @@ export default function HomeScreen() {
             onPress={handleLogin}
             activeOpacity={0.8}
           >
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={[styles.buttonText, styles.loginButtonText]}>Login</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -67,7 +67,7 @@ export default function HomeScreen() {
             onPress={handleContinueToApp}
             activeOpacity={0.8}
           >
-            <Text style={styles.buttonText}>Continue to App (Demo)</Text>
+            <Text style={[styles.buttonText, styles.demoButtonText]}>Continue to App (Demo)</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -78,62 +78,74 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#EDECF9',
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 30,
+    paddingHorizontal: 32,
   },
   imageContainer: {
-    marginBottom: 40,
+    marginBottom: 48,
     width: '100%',
     alignItems: 'center',
   },
   image: {
     width: 250,
     height: 250,
+    borderRadius: 125,
   },
   message: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#333',
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#1A1824',
     textAlign: 'center',
-    marginBottom: 50,
-    paddingHorizontal: 20,
+    marginBottom: 48,
+    letterSpacing: -0.5,
+    lineHeight: 36,
   },
   buttonContainer: {
     width: '100%',
-    gap: 15,
+    gap: 16,
   },
   button: {
     width: '100%',
     paddingVertical: 18,
-    borderRadius: 12,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   createButton: {
-    backgroundColor: '#7B68B8',
+    backgroundColor: '#9A75F0',
   },
   loginButton: {
-    backgroundColor: '#6B7B8C',
+    backgroundColor: '#FFFFFF',
+    shadowOpacity: 0.1,
+  },
+  loginButtonText: {
+    color: '#1A1824',
   },
   demoButton: {
-    backgroundColor: '#9B8AC4',
+    backgroundColor: '#EDECF9',
+    marginTop: 16,
+    shadowOpacity: 0,
+    elevation: 0,
+    borderWidth: 2,
+    borderColor: '#D4C8E8',
+  },
+  demoButtonText: {
+    color: '#8A8696',
+    fontWeight: '600',
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '700',
   },
 });

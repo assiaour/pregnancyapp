@@ -57,8 +57,7 @@ export default function MainHomeScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#7B68B8" />
-          <Text style={styles.loadingText}>Loading...</Text>
+          <Text style={styles.loadingText}>Chargement...</Text>
         </View>
       </SafeAreaView>
     );
@@ -73,183 +72,495 @@ export default function MainHomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.headerContainer}>
+        <View style={styles.profileSection}>
+          <TouchableOpacity style={styles.profileCircle} activeOpacity={0.8}>
+            <Text style={styles.profileInitials}>{user?.firstName?.[0] || 'D'}</Text>
+          </TouchableOpacity>
+            <Text style={styles.helloText}>Bonjour, {user?.firstName || 'Utilisateur'}</Text>
+        </View>
+        <View style={styles.headerIcons}>
+          <TouchableOpacity style={styles.iconPlaceholder}>
+            <Text style={styles.iconText}>🔍</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconPlaceholder}>
+            <Text style={styles.iconText}>🔔</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* 1. Baby of the Day */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Baby of the Day</Text>
-          <View style={styles.babyCard}>
-            <View style={styles.babyImagePlaceholder}>
-              <Text style={styles.babyEmoji}>👶</Text>
+        {/* Main Balance Area (Using Week Info) */}
+        <View style={styles.balanceContainer}>
+          <Text style={styles.balanceLabel}>Semaine Actuelle</Text>
+          <Text style={styles.balanceValue}>Semaine {currentWeek}</Text>
+        </View>
+
+        {/* Horizontal Cards (Simulating the Bank Cards) */}
+        <View style={styles.cardsHeader}>
+          <Text style={styles.sectionTitle}>Détails</Text>
+          <TouchableOpacity>
+            <Text style={styles.addText}>Voir tout &gt;</Text>
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.cardsScrollContent}
+        >
+          {/* Main Card */}
+          <TouchableOpacity
+            style={[styles.hCard, styles.cardPurple]}
+            onPress={() => navigation.getParent()?.navigate('Tools', { screen: 'BabySize' })}
+            activeOpacity={0.9}
+          >
+            <View style={styles.cardTopRow}>
+              <Text style={styles.cardBadge}>👶</Text>
             </View>
-            <Text style={styles.weekLabel}>Week {currentWeek} – Day {currentDay}</Text>
-            <Text style={styles.babySize}>Size: {weekInfo.fruit}</Text>
-            <Text style={styles.babyLength}>Length: {weekInfo.size_cm} cm</Text>
+            <View>
+              <Text style={styles.cardTitle}>Taille du bébé</Text>
+              <Text style={styles.cardValue}>{weekInfo.size_cm} cm</Text>
+              <View style={styles.cardFooter}>
+                <Text style={styles.cardFooterText}>{weekInfo.fruit}</Text>
+                <Text style={styles.cardFooterText}>Jour {currentDay}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          <View style={[styles.hCard, styles.cardDark]}>
+            <View style={styles.cardTopRow}>
+              <Text style={styles.cardBadge}>⚖️</Text>
+            </View>
+            <View>
+              <Text style={styles.cardTitle}>Poids</Text>
+              <Text style={styles.cardValue}>{weekInfo.weight_g} g</Text>
+              <View style={styles.cardFooter}>
+                <Text style={styles.cardFooterText}>Moyenne</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={[styles.hCard, styles.cardPink]}>
+            <View style={styles.cardTopRow}>
+              <Text style={styles.cardBadge}>📅</Text>
+            </View>
+            <View>
+              <Text style={styles.cardTitle}>Chronologie</Text>
+              <Text style={styles.cardValue}>S {currentWeek}</Text>
+              <View style={styles.cardFooter}>
+                <Text style={styles.cardFooterText}>Trimestre 2</Text>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+
+        {/* Finance/Tools Grid */}
+        <View style={styles.toolsSection}>
+          <Text style={styles.sectionTitle}>Outils</Text>
+          <View style={styles.toolsGrid}>
             <TouchableOpacity
-              style={styles.primaryBtn}
+              style={styles.toolSquare}
               onPress={() => navigation.navigate('WeekDetails', { week: currentWeek })}
               activeOpacity={0.8}
             >
-              <Text style={styles.primaryBtnText}>See Full Week</Text>
+              <View style={styles.toolIconWrapper}>
+                <Text style={styles.toolIcon}>⭐</Text>
+              </View>
+              <Text style={styles.toolTitle}>Détails de{'\n'}la semaine</Text>
             </TouchableOpacity>
-          </View>
-        </View>
 
-        {/* 2. Baby Size Comparison */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Baby Size Comparison</Text>
-          <View style={styles.sizeCard}>
-            <Text style={styles.sizeFruit}>🍎 Size: {weekInfo.fruit}</Text>
-            <Text style={styles.sizeDetail}>Length: {weekInfo.size_cm} cm</Text>
-            <Text style={styles.sizeDetail}>Weight: {weekInfo.weight_g} g</Text>
             <TouchableOpacity
-              style={styles.secondaryBtn}
+              style={styles.toolSquare}
               onPress={() => navigation.getParent()?.navigate('Tools', { screen: 'BabySize' })}
               activeOpacity={0.8}
             >
-              <Text style={styles.secondaryBtnText}>More sizes</Text>
+              <View style={styles.toolIconWrapper}>
+                <Text style={styles.toolIcon}>📊</Text>
+              </View>
+              <Text style={styles.toolTitle}>Guide des{'\n'}tailles</Text>
             </TouchableOpacity>
-          </View>
-        </View>
 
-        {/* 3. Tip of the Day */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tip of the Day</Text>
-          <View style={styles.tipCard}>
-            <Text style={styles.tipIcon}>💡</Text>
-            <Text style={styles.tipText}>
-              {tip?.text || 'Drink plenty of water today. Hydration helps prevent headaches during pregnancy.'}
-            </Text>
-          </View>
-        </View>
-
-        {/* 4. Article of the Day */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Article of the Day</Text>
-          <View style={styles.articleCard}>
-            <Text style={styles.articleTitle}>
-              {article?.title || 'Foods to Avoid During Pregnancy'}
-            </Text>
-            <Text style={styles.articlePreview} numberOfLines={2}>
-              {article?.content?.substring(0, 100) || 'Learn which foods to avoid for a healthy pregnancy...'}
-            </Text>
             <TouchableOpacity
-              style={styles.secondaryBtn}
-              onPress={() => navigation.getParent()?.navigate('Articles')}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.secondaryBtnText}>Read More</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* 5. Ask the Pregnancy Assistant */}
-        <View style={styles.section}>
-          <View style={styles.chatCard}>
-            <Text style={styles.chatIcon}>🤖</Text>
-            <Text style={styles.chatTitle}>Ask the Pregnancy Assistant</Text>
-            <Text style={styles.chatSubtitle}>Ask anything about pregnancy.</Text>
-            <TouchableOpacity
-              style={styles.primaryBtn}
+              style={styles.toolSquare}
               onPress={() => navigation.getParent()?.navigate('Chat')}
               activeOpacity={0.8}
             >
-              <Text style={styles.primaryBtnText}>Chat</Text>
+              <View style={styles.toolIconWrapper}>
+                <Text style={styles.toolIcon}>💬</Text>
+              </View>
+              <Text style={styles.toolTitle}>Assistant{'\n'}IA</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.toolSquare}
+              onPress={() => navigation.getParent()?.navigate('Articles')}
+              activeOpacity={0.8}
+            >
+              <View style={styles.toolIconWrapper}>
+                <Text style={styles.toolIcon}>📈</Text>
+              </View>
+              <Text style={styles.toolTitle}>Conseils &{'\n'}Astuces</Text>
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Premium Banner */}
+        <View style={styles.premiumBanner}>
+          <View style={styles.circleDeco} />
+          <View style={styles.premiumBadge}>
+            <Text style={styles.premiumBadgeText}>Le conseil du jour</Text>
+          </View>
+          <Text style={styles.premiumTitle}>Conseil quotidien</Text>
+          <Text style={styles.premiumSubtitle}>
+            {tip?.text || 'Buvez beaucoup d\'eau aujourd\'hui. L\'hydratation aide à prévenir les maux de tête...'}
+          </Text>
+        </View>
+
+        {/* Recent Articles List */}
+        <View style={styles.listSection}>
+          <View style={styles.listHeader}>
+            <Text style={styles.sectionTitle}>À lire</Text>
+            <TouchableOpacity onPress={() => navigation.getParent()?.navigate('Articles')}>
+              <Text style={styles.seeAllText}>Voir tout &gt;</Text>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={() => navigation.getParent()?.navigate('Articles')}
+          >
+            <View style={styles.listLeft}>
+              <View style={styles.listIconBox}>
+                <Text style={styles.listIcon}>🥑</Text>
+              </View>
+              <View>
+                <Text style={styles.listTitle} numberOfLines={1}>
+                  {article?.title || 'Guide de nutrition'}
+                </Text>
+                <Text style={styles.listDesc}>Article</Text>
+              </View>
+            </View>
+            <Text style={styles.listRightText}>&gt;</Text>
+          </TouchableOpacity>
+        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F0FA' },
+  container: { flex: 1, backgroundColor: '#EDECF9' },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: 12, color: '#7B68B8' },
+  loadingText: { marginTop: 12, color: '#9A75F0', fontWeight: 'bold' },
   scroll: { flex: 1 },
-  scrollContent: { padding: 20, paddingBottom: 40 },
-  section: { marginBottom: 24 },
-  sectionTitle: {
+  scrollContent: { paddingBottom: 60 },
+
+  // Header
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 24,
+  },
+  profileSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profileCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#DCD8F3',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  profileInitials: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#4A3F6B',
-    marginBottom: 12,
+    color: '#1A1824',
   },
-  babyCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
+  helloText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1A1824',
+  },
+  headerIcons: {
+    flexDirection: 'row',
+  },
+  iconPlaceholder: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 12,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  iconText: {
+    fontSize: 16,
+  },
+
+  // Main Balance Area (Current Week)
+  balanceContainer: {
+    paddingHorizontal: 24,
+    marginBottom: 24,
+  },
+  balanceLabel: {
+    fontSize: 16,
+    color: '#4A4656',
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  balanceValue: {
+    fontSize: 48,
+    fontWeight: '800',
+    color: '#1A1824',
+    letterSpacing: -1,
+  },
+
+  // Horizontal Cards
+  cardsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#8A8696',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  addText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#9A75F0',
+  },
+  cardsScrollContent: {
+    paddingHorizontal: 24,
+    paddingBottom: 32,
+    gap: 16,
+  },
+  hCard: {
+    width: 180,
+    height: 220,
+    borderRadius: 24,
+    padding: 24,
+    justifyContent: 'space-between',
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 8,
+  },
+  cardPurple: {
+    backgroundColor: '#9A75F0',
+  },
+  cardDark: {
+    backgroundColor: '#1D1929',
+  },
+  cardPink: {
+    backgroundColor: '#F47CBD',
+  },
+  cardTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  cardBadge: {
+    fontSize: 24,
+    opacity: 0.9,
+  },
+  cardTitle: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    fontWeight: '600',
+    opacity: 0.8,
+    marginTop: 'auto',
+  },
+  cardValue: {
+    fontSize: 24,
+    color: '#FFFFFF',
+    fontWeight: '800',
+    marginVertical: 4,
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  cardFooterText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+    opacity: 0.7,
+  },
+
+  // Finance / Tools Grid
+  toolsSection: {
+    paddingHorizontal: 24,
+    marginBottom: 24,
+  },
+  toolsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: 16,
+  },
+  toolSquare: {
+    width: '47%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
     padding: 20,
-    borderWidth: 2,
-    borderColor: '#D4C8E8',
+    marginBottom: 16,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
   },
-  babyImagePlaceholder: {
-    height: 120,
-    borderRadius: 12,
-    backgroundColor: '#E8E0F0',
+  toolIconWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    backgroundColor: '#F5F3FF',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
   },
-  babyEmoji: { fontSize: 48 },
-  weekLabel: { fontSize: 18, fontWeight: '700', color: '#4A3F6B', marginBottom: 8 },
-  babySize: { fontSize: 16, color: '#5A4A7B', marginBottom: 4 },
-  babyLength: { fontSize: 16, color: '#5A4A7B', marginBottom: 16 },
-  sizeCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 2,
-    borderColor: '#D4C8E8',
+  toolIcon: {
+    fontSize: 24,
   },
-  sizeFruit: { fontSize: 18, fontWeight: '600', color: '#4A3F6B', marginBottom: 8 },
-  sizeDetail: { fontSize: 15, color: '#5A4A7B', marginBottom: 4 },
-  tipCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 2,
-    borderColor: '#D4C8E8',
+  toolTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1A1824',
+    lineHeight: 20,
+  },
+
+  // Premium Banner
+  premiumBanner: {
+    marginHorizontal: 24,
+    backgroundColor: '#D1E3FD',
+    borderRadius: 24,
+    padding: 24,
+    marginBottom: 32,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  premiumBadge: {
+    backgroundColor: '#1A1824',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+    marginBottom: 16,
+  },
+  premiumBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  premiumTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#1A1824',
+    marginBottom: 8,
+  },
+  premiumSubtitle: {
+    fontSize: 14,
+    color: '#4A4656',
+    fontWeight: '500',
+    lineHeight: 20,
+    maxWidth: '80%',
+  },
+  circleDeco: {
+    position: 'absolute',
+    right: -20,
+    bottom: -20,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#F47CBD',
+    opacity: 0.2,
+  },
+
+  // Recent articles / info list
+  listSection: {
+    paddingHorizontal: 24,
+  },
+  listHeader: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
   },
-  tipIcon: { fontSize: 28, marginRight: 12 },
-  tipText: { flex: 1, fontSize: 15, color: '#5A4A7B', lineHeight: 22 },
-  articleCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 2,
-    borderColor: '#D4C8E8',
+  seeAllText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#9A75F0',
   },
-  articleTitle: { fontSize: 17, fontWeight: '600', color: '#4A3F6B', marginBottom: 8 },
-  articlePreview: { fontSize: 14, color: '#7B68B8', marginBottom: 16 },
-  chatCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 2,
-    borderColor: '#D4C8E8',
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 20,
+    marginBottom: 12,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  chatIcon: { fontSize: 32, marginBottom: 8 },
-  chatTitle: { fontSize: 17, fontWeight: '600', color: '#4A3F6B', marginBottom: 4 },
-  chatSubtitle: { fontSize: 14, color: '#7B68B8', marginBottom: 16 },
-  primaryBtn: {
-    backgroundColor: '#7B68B8',
-    paddingVertical: 14,
-    borderRadius: 12,
+  listLeft: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  primaryBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  secondaryBtn: {
-    backgroundColor: '#E8E0F0',
-    paddingVertical: 12,
-    borderRadius: 12,
+  listIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    backgroundColor: '#1D1929',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
+    marginRight: 16,
   },
-  secondaryBtnText: { color: '#7B68B8', fontSize: 15, fontWeight: '600' },
+  listIcon: {
+    fontSize: 20,
+  },
+  listTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1A1824',
+    marginBottom: 4,
+  },
+  listDesc: {
+    fontSize: 13,
+    color: '#8A8696',
+    fontWeight: '500',
+  },
+  listRightText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1A1824',
+  },
 });

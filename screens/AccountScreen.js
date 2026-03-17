@@ -19,23 +19,39 @@ export default function AccountScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.title}>Profil</Text>
+        <Text style={styles.subtitle}>Paramètres de votre parcours de grossesse</Text>
+      </View>
+
       <View style={styles.content}>
-        <Text style={styles.title}>Profile</Text>
-        <Text style={styles.subtitle}>
-          Your pregnancy journey
-        </Text>
-        {email ? (
-          <Text style={styles.info}>Email: {email}</Text>
-        ) : null}
-        {user?.ddr ? (
-          <Text style={styles.info}>Due date (DDR): {user.ddr}</Text>
-        ) : null}
+        <View style={styles.profileCard}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{user?.firstName?.[0] || email?.[0]?.toUpperCase() || 'U'}</Text>
+          </View>
+          <Text style={styles.name}>{user?.firstName || 'Utilisateur'} {user?.lastName || ''}</Text>
+          {email ? <Text style={styles.info}>{email}</Text> : null}
+          {user?.ddr ? <Text style={styles.info}>Date d'accouchement : {user.ddr}</Text> : null}
+        </View>
+
+        <View style={styles.actionsCard}>
+          <TouchableOpacity style={styles.actionItem} onPress={() => { }}>
+            <Text style={styles.actionIcon}>⚙️</Text>
+            <Text style={styles.actionText}>Paramètres</Text>
+            <Text style={styles.actionArrow}>&gt;</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.actionItem, { borderBottomWidth: 0 }]} onPress={() => { }}>
+            <Text style={styles.actionIcon}>❓</Text>
+            <Text style={styles.actionText}>Aide et support</Text>
+            <Text style={styles.actionArrow}>&gt;</Text>
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity
-          style={styles.primaryButton}
+          style={styles.logoutBtn}
           onPress={handleLogout}
         >
-          <Text style={styles.primaryButtonText}>Logout</Text>
+          <Text style={styles.logoutText}>Se déconnecter</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -43,42 +59,110 @@ export default function AccountScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F0FA' },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 30,
+  container: { flex: 1, backgroundColor: '#EDECF9' },
+  headerContainer: {
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 24,
   },
   title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: '#4A3F6B',
-    marginBottom: 12,
-    textAlign: 'center',
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#1A1824',
+    letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 15,
-    color: '#7B68B8',
-    textAlign: 'center',
+    fontSize: 16,
+    color: '#8A8696',
+    fontWeight: '500',
+    marginTop: 4,
+  },
+  content: {
+    paddingHorizontal: 24,
+  },
+  profileCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 24,
+    alignItems: 'center',
     marginBottom: 24,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#F5F3FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  avatarText: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#9A75F0',
+  },
+  name: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1A1824',
+    marginBottom: 4,
   },
   info: {
-    fontSize: 16,
-    color: '#5A4A7B',
+    fontSize: 15,
+    color: '#8A8696',
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  actionsCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 16,
     marginBottom: 24,
-    textAlign: 'center',
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  primaryButton: {
-    backgroundColor: '#7B68B8',
+  actionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 12,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F7F6FB',
   },
-  primaryButtonText: {
-    color: '#fff',
+  actionIcon: {
+    fontSize: 20,
+    width: 32,
+  },
+  actionText: {
     fontSize: 16,
     fontWeight: '600',
+    color: '#1A1824',
+    flex: 1,
+  },
+  actionArrow: {
+    fontSize: 16,
+    color: '#9A75F0',
+    fontWeight: '700',
+  },
+  logoutBtn: {
+    backgroundColor: '#FFEBF0',
+    borderRadius: 16,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  logoutText: {
+    color: '#F44336',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
 

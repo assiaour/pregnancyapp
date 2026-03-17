@@ -19,7 +19,7 @@ const BOTTOM_PADDING = 100;
 export default function ChatScreen() {
   const { user } = useUser();
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: "Hi! I'm your Pregnancy Assistant. Ask me anything about pregnancy, symptoms, nutrition, or baby development." },
+    { role: 'assistant', content: "Bonjour ! Je suis votre assistant de grossesse. Posez-moi vos questions sur la grossesse, les symptômes, la nutrition ou le développement de bébé." },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -44,11 +44,11 @@ export default function ChatScreen() {
         .filter((m) => m.role === 'user' || m.role === 'assistant')
         .map((m) => ({ role: m.role, content: m.content }));
       const res = await chat(text, history, user?.email || 'guest');
-      setMessages((prev) => [...prev, { role: 'assistant', content: res.reply || res.message || 'Sorry, I could not respond.' }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: res.reply || res.message || 'Désolé, je ne peux pas répondre.' }]);
     } catch (e) {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: "I'm having trouble connecting. Please check your internet connection and try again. (Chatbot requires OPENAI_API_KEY on server)" },
+        { role: 'assistant', content: "Je rencontre des problèmes de connexion. Veuillez vérifier votre connexion Internet et réessayer. (Le chatbot nécessite OPENAI_API_KEY sur le serveur)" },
       ]);
     } finally {
       setLoading(false);
@@ -58,8 +58,8 @@ export default function ChatScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Pregnancy Assistant</Text>
-            <Text style={styles.headerSubtitle}>Ask anything about pregnancy</Text>
+        <Text style={styles.headerTitle}>Assistant de Grossesse</Text>
+        <Text style={styles.headerSubtitle}>Posez vos questions sur la grossesse</Text>
       </View>
 
       <FlatList
@@ -81,7 +81,7 @@ export default function ChatScreen() {
       >
         <TextInput
           style={styles.input}
-          placeholder="Ask anything..."
+          placeholder="Posez votre question..."
           placeholderTextColor="#9B8AC4"
           value={input}
           onChangeText={setInput}
@@ -94,7 +94,7 @@ export default function ChatScreen() {
           onPress={send}
           disabled={loading || !input.trim()}
         >
-          {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.sendText}>Send</Text>}
+          {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.sendText}>Envoyer</Text>}
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -102,49 +102,87 @@ export default function ChatScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F0FA' },
-  header: { padding: 16, borderBottomWidth: 1, borderBottomColor: '#D4C8E8' },
-  headerTitle: { fontSize: 20, fontWeight: '700', color: '#4A3F6B' },
-  headerSubtitle: { fontSize: 14, color: '#7B68B8', marginTop: 4 },
-  list: { padding: 16 },
+  container: { flex: 1, backgroundColor: '#EDECF9' },
+  header: {
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 16,
+    backgroundColor: '#EDECF9',
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#1A1824',
+    letterSpacing: -0.5
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#8A8696',
+    fontWeight: '500',
+    marginTop: 4
+  },
+  list: { paddingHorizontal: 20 },
   bubble: {
     maxWidth: '85%',
-    padding: 14,
-    borderRadius: 16,
+    padding: 16,
+    borderRadius: 24,
     marginBottom: 12,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  userBubble: { alignSelf: 'flex-end', backgroundColor: '#7B68B8' },
-  assistantBubble: { alignSelf: 'flex-start', backgroundColor: '#fff', borderWidth: 2, borderColor: '#D4C8E8' },
-  userText: { color: '#fff', fontSize: 15 },
-  assistantText: { color: '#5A4A7B', fontSize: 15 },
+  userBubble: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#9A75F0',
+    borderBottomRightRadius: 4,
+  },
+  assistantBubble: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 4,
+  },
+  userText: { color: '#FFFFFF', fontSize: 15, lineHeight: 22, fontWeight: '500' },
+  assistantText: { color: '#1A1824', fontSize: 15, lineHeight: 22, fontWeight: '500' },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    padding: 12,
-    backgroundColor: '#fff',
-    borderTopWidth: 2,
-    borderTopColor: '#D4C8E8',
+    padding: 16,
+    paddingBottom: Platform.OS === 'ios' ? 32 : 16,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: -8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 24,
+    elevation: 8,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
   },
   input: {
     flex: 1,
-    backgroundColor: '#F5F0FA',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    backgroundColor: '#F7F6FB',
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
     fontSize: 16,
-    color: '#333',
-    maxHeight: 100,
+    color: '#1A1824',
+    maxHeight: 120,
     marginRight: 12,
   },
   sendBtn: {
-    backgroundColor: '#7B68B8',
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 12,
+    backgroundColor: '#9A75F0',
+    height: 52,
+    paddingHorizontal: 24,
+    borderRadius: 26,
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: 70,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  sendBtnDisabled: { opacity: 0.6 },
-  sendText: { color: '#fff', fontWeight: '600' },
+  sendBtnDisabled: { opacity: 0.5, shadowOpacity: 0 },
+  sendText: { color: '#FFFFFF', fontWeight: '700', fontSize: 16 },
 });

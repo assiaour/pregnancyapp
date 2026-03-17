@@ -100,6 +100,7 @@ const articleSchema = new mongoose.Schema({
   category: String,
   week: Number,
   image: String,
+  source: String, // Added to cite where the article came from
 }, { timestamps: true });
 const Article = mongoose.model('Article', articleSchema);
 
@@ -170,7 +171,7 @@ app.get('/api/tips/daily', async (req, res) => {
       tip = await Tip.findOne().sort({ createdAt: 1 });
     }
     if (!tip) {
-      return res.json({ text: 'Drink plenty of water today. Hydration helps prevent headaches during pregnancy.' });
+      return res.json({ text: 'Buvez beaucoup d\'eau aujourd\'hui. L\'hydratation aide à prévenir les maux de tête pendant la grossesse.' });
     }
     res.json(tip);
   } catch (err) {
@@ -194,7 +195,7 @@ app.get('/api/articles/daily', async (req, res) => {
   try {
     const articles = await Article.find();
     if (articles.length === 0) {
-      return res.json({ title: 'Foods to Avoid During Pregnancy', content: 'Learn which foods to avoid for a healthy pregnancy.' });
+      return res.json({ title: 'Aliments à éviter pendant la grossesse', content: 'Découvrez quels aliments éviter pour une grossesse saine.' });
     }
     const dayOfYear = Math.floor((Date.now() / 86400000) % 365);
     const idx = dayOfYear % articles.length;
@@ -219,7 +220,7 @@ app.post('/api/chat', async (req, res) => {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return res.status(503).json({
-      reply: "The Pregnancy Assistant is not configured yet. Please add OPENAI_API_KEY to the server environment.",
+      reply: "L'assistant de grossesse n'est pas encore configuré. Veuillez ajouter OPENAI_API_KEY à l'environnement du serveur.",
     });
   }
   try {
@@ -228,7 +229,7 @@ app.post('/api/chat', async (req, res) => {
       return res.status(400).json({ error: 'Message required' });
     }
     const messages = [
-      { role: 'system', content: 'You are a helpful, friendly Pregnancy Assistant. Answer questions about pregnancy, symptoms, nutrition, baby development, and general prenatal care. Be supportive and provide accurate, evidence-based information. If unsure, recommend consulting a healthcare provider.' },
+      { role: 'system', content: 'Vous êtes un assistant de grossesse amical et utile. Répondez aux questions sur la grossesse, les symptômes, la nutrition, le développement du bébé et les soins prénataux généraux. Soyez d\'un grand soutien et fournissez des informations précises et fondées sur des preuves. En cas de doute, recommandez de consulter un professionnel de la santé. Répondez toujours en français.' },
       ...history.slice(-10).map((m) => ({ role: m.role, content: m.content })),
       { role: 'user', content: message },
     ];
@@ -248,7 +249,7 @@ app.post('/api/chat', async (req, res) => {
     if (data.error) {
       return res.status(500).json({ reply: data.error.message || 'AI error' });
     }
-    const reply = data.choices?.[0]?.message?.content || 'Sorry, I could not respond.';
+    const reply = data.choices?.[0]?.message?.content || 'Désolé, je ne peux pas répondre.';
     if (userId) {
       await ChatHistory.create([{ userId, role: 'user', content: message }, { userId, role: 'assistant', content: reply }]);
     }

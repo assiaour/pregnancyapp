@@ -13,17 +13,19 @@ export default function ToolsScreen() {
   const navigation = useNavigation();
 
   const tools = [
-    { id: 'BabyDev', title: 'Baby Development', subtitle: 'Week by week carousel', icon: '👶' },
-    { id: 'BabySize', title: 'Baby Size Comparison', subtitle: 'Fruit/seed comparison', icon: '📏' },
-    { id: 'Calculator', title: 'Pregnancy Calculator', subtitle: 'Week, due date, trimester', icon: '🧮' },
-    { id: 'SymptomChecker', title: 'Symptom Checker', subtitle: 'Get recommendations', icon: '🩺' },
+    { id: 'WeekDetails', title: 'Développement du bébé', subtitle: 'Carousel semaine par semaine', icon: '👶' },
+    { id: 'BabySize', title: 'Taille du bébé', subtitle: 'Comparaison avec des fruits', icon: '📏' },
+    { id: 'Calculator', title: 'Calculatrice de grossesse', subtitle: 'Semaine, terme, trimestre', icon: '🧮' },
+    { id: 'SymptomChecker', title: 'Vérificateur de symptômes', subtitle: 'Obtenez des recommandations', icon: '🩺' },
   ];
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.title}>Tools</Text>
-        <Text style={styles.subtitle}>Functional tools for your pregnancy</Text>
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.title}>Outils</Text>
+          <Text style={styles.subtitle}>Outils pratiques et calculatrices pour votre grossesse</Text>
+        </View>
 
         {tools.map((t) => (
           <TouchableOpacity
@@ -32,12 +34,14 @@ export default function ToolsScreen() {
             onPress={() => navigation.navigate(t.id)}
             activeOpacity={0.8}
           >
-            <Text style={styles.cardIcon}>{t.icon}</Text>
+            <View style={styles.iconBox}>
+              <Text style={styles.cardIcon}>{t.icon}</Text>
+            </View>
             <View style={styles.cardText}>
               <Text style={styles.cardTitle}>{t.title}</Text>
               <Text style={styles.cardSubtitle}>{t.subtitle}</Text>
             </View>
-            <Text style={styles.arrow}>→</Text>
+            <Text style={styles.arrow}>&gt;</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -46,23 +50,64 @@ export default function ToolsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F0FA' },
-  scroll: { padding: 20 },
-  title: { fontSize: 24, fontWeight: '700', color: '#4A3F6B', marginBottom: 8 },
-  subtitle: { fontSize: 15, color: '#7B68B8', marginBottom: 24 },
+  container: { flex: 1, backgroundColor: '#EDECF9' },
+  scroll: { padding: 24, paddingBottom: 60 },
+  headerContainer: {
+    marginBottom: 32,
+    marginTop: 12,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#1A1824',
+    marginBottom: 8,
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#8A8696',
+    fontWeight: '500',
+    lineHeight: 22,
+  },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     padding: 20,
-    borderRadius: 16,
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: '#D4C8E8',
+    borderRadius: 24,
+    marginBottom: 16,
+    shadowColor: '#8C72FF',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
   },
-  cardIcon: { fontSize: 36, marginRight: 16 },
+  iconBox: {
+    width: 56,
+    height: 56,
+    borderRadius: 20,
+    backgroundColor: '#F5F3FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  cardIcon: { fontSize: 28 },
   cardText: { flex: 1 },
-  cardTitle: { fontSize: 17, fontWeight: '600', color: '#4A3F6B' },
-  cardSubtitle: { fontSize: 14, color: '#7B68B8', marginTop: 4 },
-  arrow: { fontSize: 18, color: '#7B68B8' },
+  cardTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#1A1824',
+    marginBottom: 4,
+  },
+  cardSubtitle: {
+    fontSize: 14,
+    color: '#8A8696',
+    fontWeight: '500',
+  },
+  arrow: {
+    fontSize: 18,
+    color: '#9A75F0',
+    fontWeight: '700',
+    marginLeft: 8,
+  },
 });
