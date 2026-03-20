@@ -7,11 +7,56 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../context/UserContext';
 import { getWeek, getTipOfDay, getArticleOfDay } from '../api';
 import { parseDate, weeksAndDaysFromDDR } from '../utils/pregnancy';
+
+// Fruit images
+const FRUIT_IMAGES = {
+  1: require('../assets/4-weeks-poppy-seeds_4x3.jpg'),
+  2: require('../assets/4-weeks-poppy-seeds_4x3.jpg'),
+  3: require('../assets/4-weeks-poppy-seeds_4x3.jpg'),
+  4: require('../assets/4-weeks-poppy-seeds_4x3.jpg'),
+  5: require('../assets/5-weeks-sesame-seeds_4x3.jpg'),
+  6: require('../assets/6-weeks-lentils_4x3.jpg'),
+  7: require('../assets/7-weeks-blueberry_4x3.jpg'),
+  8: require('../assets/8-weeks-raspberry_4x3.jpg'),
+  9: require('../assets/9-weeks-grape_4x3.jpg'),
+  10: require('../assets/10-weeks-strawberry_4x3.jpg'),
+  11: require('../assets/11-weeks-fig_4x3.jpg'),
+  12: require('../assets/12-weeks-lime_4x3.jpg'),
+  13: require('../assets/13-weeks-plum_4x3.jpg'),
+  14: require('../assets/15-weeks-lemon_4x3.jpg'),
+  15: require('../assets/15-weeks-lemon_4x3.jpg'),
+  16: require('../assets/16-weeks-apple_4x3.jpg'),
+  17: require('../assets/17-weeks-avocado_4x3.jpg'),
+  18: require('../assets/18-weeks-bellpepper_4x3.jpg'),
+  19: require('../assets/19-weeks-pomegranate_4x3.jpg'),
+  20: require('../assets/20-weeks-banana_4x3.jpg'),
+  21: require('../assets/21-weeks-mango_4x3.jpg'),
+  22: require('../assets/22-weeks-sweet-potato_4x3.jpg'),
+  23: require('../assets/23-weeks-grapefruit_4x3.jpg'),
+  24: require('../assets/24-weeks-corn_4x3.jpg'),
+  25: require('../assets/25-weeks-acorn-squash_4x3.jpg'),
+  26: require('../assets/26-weeks-spaghetti-squash_4x3.jpg'),
+  27: require('../assets/27-weeks-cauliflower_4x3.jpg'),
+  28: require('../assets/28-weeks-eggplant_4x3.jpg'),
+  29: require('../assets/29-weeks-butternut-squash_4x3.jpg'),
+  30: require('../assets/30-weeks-cabbage_4x3.jpg'),
+  31: require('../assets/31-weeks-coconut_4x3.jpg'),
+  32: require('../assets/32-weeks-papaya_4x3.jpg'),
+  33: require('../assets/33-weeks-pineapple_4x3.jpg'),
+  34: require('../assets/34-weeks-cantaloupe_4x3.jpg'),
+  35: require('../assets/35-weeks-honeydew-melon_4x3.jpg'),
+  36: require('../assets/36-weeks-lettuce_4x3.jpg'),
+  37: require('../assets/37-weeks-swiss-chard_4x3.jpg'),
+  38: require('../assets/38-weeks-mini-watermelon_4x3.jpg'),
+  39: require('../assets/39-weeks-pumpkin_4x3.jpg'),
+  40: require('../assets/40-weeks-watermelon_4x3.jpg'),
+};
 
 export default function MainHomeScreen() {
   const navigation = useNavigation();
@@ -120,8 +165,12 @@ export default function MainHomeScreen() {
             onPress={() => navigation.getParent()?.navigate('Tools', { screen: 'BabySize' })}
             activeOpacity={0.9}
           >
-            <View style={styles.cardTopRow}>
-              <Text style={styles.cardBadge}>👶</Text>
+            <View style={[styles.cardTopRow, { overflow: 'hidden', borderRadius: 16 }]}>
+              {FRUIT_IMAGES[currentWeek] ? (
+                 <Image source={FRUIT_IMAGES[currentWeek]} style={{ width: 64, height: 64, borderRadius: 16 }} />
+              ) : (
+                 <Text style={styles.cardBadge}>👶</Text>
+              )}
             </View>
             <View>
               <Text style={styles.cardTitle}>Taille du bébé</Text>
@@ -206,6 +255,27 @@ export default function MainHomeScreen() {
                 <Text style={styles.toolIcon}>📈</Text>
               </View>
               <Text style={styles.toolTitle}>Conseils &{'\n'}Astuces</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.toolSquare}
+              onPress={() => navigation.getParent()?.navigate('Tools', { screen: 'Calculator' })}
+              activeOpacity={0.8}
+            >
+              <View style={styles.toolIconWrapper}>
+                <Text style={styles.toolIcon}>🧮</Text>
+              </View>
+              <Text style={styles.toolTitle}>Calculatrice{'\n'}grossesse</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.toolSquare}
+              onPress={() => navigation.getParent()?.navigate('Tools', { screen: 'SymptomChecker' })}
+              activeOpacity={0.8}
+            >
+              <View style={styles.toolIconWrapper}>
+                <Text style={styles.toolIcon}>🩺</Text>
+              </View>
+              <Text style={styles.toolTitle}>Vérificateur{'\n'}symptômes</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -10,25 +10,25 @@ import {
 import { useNavigation } from '@react-navigation/native';
 
 const SYMPTOMS = [
-  { id: 'nausea', label: 'Nausea' },
-  { id: 'back_pain', label: 'Back pain' },
-  { id: 'headache', label: 'Headache' },
+  { id: 'nausea', label: 'Nausée' },
+  { id: 'back_pain', label: 'Mal de dos' },
+  { id: 'headache', label: 'Maux de tête' },
   { id: 'fatigue', label: 'Fatigue' },
-  { id: 'heartburn', label: 'Heartburn' },
-  { id: 'swelling', label: 'Swelling' },
+  { id: 'heartburn', label: 'Brûlures d\'estomac' },
+  { id: 'swelling', label: 'Gonflement' },
   { id: 'constipation', label: 'Constipation' },
-  { id: 'braxton_hicks', label: 'Braxton Hicks' },
+  { id: 'braxton_hicks', label: 'Contractions de Braxton Hicks' },
 ];
 
 const RECOMMENDATIONS = {
-  nausea: 'Eat small, frequent meals. Avoid strong smells. Ginger tea may help. Stay hydrated.',
-  back_pain: 'Use proper posture. Try prenatal yoga or gentle stretches. Consider a support pillow.',
-  headache: 'Rest in a dark room. Stay hydrated. Check with your doctor before taking any medication.',
-  fatigue: 'Rest when possible. Light exercise can help. Ensure adequate iron and sleep.',
-  heartburn: 'Eat smaller meals. Avoid spicy/fatty foods. Sleep propped up slightly.',
-  swelling: 'Elevate feet when possible. Stay hydrated. Avoid standing for long periods.',
-  constipation: 'Increase fiber intake. Drink plenty of water. Light walking can help.',
-  braxton_hicks: 'Change position. Rest. Stay hydrated. If frequent or painful, contact your doctor.',
+  nausea: 'Mangez de petits repas fréquents. Évitez les odeurs fortes. Le thé au gingembre peut aider. Restez hydratée.',
+  back_pain: 'Adoptez une bonne posture. Essayez le yoga prénatal ou des étirements doux. Envisagez un coussin de soutien.',
+  headache: 'Reposez-vous dans une pièce sombre. Restez hydratée. Consultez votre médecin avant de prendre tout médicament.',
+  fatigue: 'Reposez-vous dès que possible. De l\'exercice léger peut aider. Veillez à un apport adéquat en fer et en sommeil.',
+  heartburn: 'Mangez de plus petits repas. Évitez les aliments épicés ou gras. Dormez en position légèrement surélevée.',
+  swelling: 'Surelevez vos pieds dès que possible. Restez hydratée. Évitez de rester debout pendant de longues périodes.',
+  constipation: 'Augmentez votre apport en fibres. Buvez beaucoup d\'eau. La marche légère peut aider.',
+  braxton_hicks: 'Changez de position. Reposez-vous. Restez hydratée. Si elles sont fréquentes ou douloureuses, contactez votre médecin.',
 };
 
 export default function SymptomCheckerScreen() {
@@ -43,13 +43,13 @@ export default function SymptomCheckerScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} activeOpacity={0.8}>
-          <Text style={styles.backBtnText}>&lt; Back</Text>
+          <Text style={styles.backBtnText}>&lt; Retour</Text>
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.headerContainer}>
-          <Text style={styles.title}>Symptom Checker</Text>
-          <Text style={styles.subtitle}>Select your symptoms to get recommendations</Text>
+          <Text style={styles.title}>Vérificateur de symptômes</Text>
+          <Text style={styles.subtitle}>Sélectionnez vos symptômes pour obtenir des recommandations</Text>
         </View>
 
         <View style={styles.chips}>
@@ -69,14 +69,14 @@ export default function SymptomCheckerScreen() {
 
         {selected.length > 0 && (
           <View style={styles.recommendations}>
-            <Text style={styles.recTitle}>Recommendations</Text>
+            <Text style={styles.recTitle}>Recommandations</Text>
             {selected.map((id) => (
               <View key={id} style={styles.recItem}>
                 <Text style={styles.recSymptom}>{SYMPTOMS.find((x) => x.id === id)?.label}</Text>
                 <Text style={styles.recText}>{RECOMMENDATIONS[id]}</Text>
               </View>
             ))}
-            <Text style={styles.disclaimer}>Always consult your healthcare provider for medical advice.</Text>
+            <Text style={styles.disclaimer}>Consultez toujours votre professionnel de santé pour un avis médical.</Text>
           </View>
         )}
       </ScrollView>

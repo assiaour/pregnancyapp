@@ -60,3 +60,13 @@ export async function getAccount(email) {
   if (!res.ok) return null;
   return res.json();
 }
+
+export async function updateAccount(email, data) {
+  const res = await fetch(url(`/api/accounts/${encodeURIComponent(email)}`), {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Update failed');
+  return res.json();
+}

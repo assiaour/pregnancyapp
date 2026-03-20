@@ -67,15 +67,16 @@ export default function WeekDetailsScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { user } = useUser();
-  const initialWeek = route.params?.week ?? 1;
   const [weeks, setWeeks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedWeek, setSelectedWeek] = useState(initialWeek);
   const flatRef = useRef(null);
 
   const ddrDate = user?.ddr ? parseDate(user.ddr) : null;
   const wd = weeksAndDaysFromDDR(ddrDate);
   const currentWeek = wd?.week ?? 18;
+
+  const initialWeek = route.params?.week ?? currentWeek ?? 1;
+  const [selectedWeek, setSelectedWeek] = useState(initialWeek);
 
   useEffect(() => {
     getAllWeeks()

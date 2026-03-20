@@ -26,24 +26,25 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     setError('');
     if (!email.trim() || !password.trim()) {
-      setError('Please enter email and password.');
+      setError('Veuillez entrer votre e-mail et votre mot de passe.');
       return;
     }
     setLoading(true);
     try {
       const account = await getAccount(email.trim());
       if (!account) {
-        setError('Account not found.');
+        setError('E-mail ou mot de passe incorrect.');
         return;
       }
-      if (account.password !== password) {
-        setError('Invalid password.');
+      const dbPassword = account.password ? account.password.trim() : '';
+      if (dbPassword !== password.trim()) {
+        setError('E-mail ou mot de passe incorrect.');
         return;
       }
-      login(account.mail, account.ddr, account.semaineGrossesse);
-      navigation.replace('MainTabs');
+      // React Navigation will automatically switch to the logged-in stack when user state updates
+      login(account.mail, account.ddr, account.semaineGrossesse, account.nom);
     } catch (e) {
-      setError(e.message || 'Login failed.');
+      setError(e.message || 'Échec de la connexion.');
     } finally {
       setLoading(false);
     }
@@ -61,18 +62,18 @@ export default function LoginScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            <Text style={styles.title}>Login</Text>
+            <Text style={styles.title}>Connexion</Text>
             <Text style={styles.subtitle}>
-              Welcome back! Please sign in to continue.
+              Ravi de vous revoir ! Veuillez vous connecter pour continuer.
             </Text>
 
             {!!error && <Text style={styles.errorText}>{error}</Text>}
 
             <View style={styles.form}>
-              <Text style={styles.label}>Email</Text>
+              <Text style={styles.label}>E-mail</Text>
               <TextInput
                 style={styles.input}
-                placeholder="your@email.com"
+                placeholder="votre@email.com"
                 placeholderTextColor="#9B8AC4"
                 value={email}
                 onChangeText={setEmail}
@@ -81,7 +82,7 @@ export default function LoginScreen() {
                 autoCorrect={false}
               />
 
-              <Text style={styles.label}>Password</Text>
+              <Text style={styles.label}>Mot de passe</Text>
               <TextInput
                 style={styles.input}
                 placeholder="••••••••"
@@ -97,7 +98,7 @@ export default function LoginScreen() {
                 activeOpacity={0.8}
                 disabled={loading}
               >
-                {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.loginButtonText}>Login</Text>}
+                {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.loginButtonText}>Se connecter</Text>}
               </TouchableOpacity>
             </View>
 
@@ -105,7 +106,7 @@ export default function LoginScreen() {
               style={styles.backButton}
               onPress={() => navigation.goBack()}
             >
-              <Text style={styles.backButtonText}>← Back to Home</Text>
+              <Text style={styles.backButtonText}>← Retour à l'accueil</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

@@ -142,6 +142,24 @@ app.get('/api/accounts/:email', async (req, res) => {
   }
 });
 
+// Update account by email
+app.put('/api/accounts/:email', async (req, res) => {
+  try {
+    const { nom, password } = req.body;
+    const account = await Account.findOne({ mail: req.params.email });
+    if (!account) return res.status(404).json({ error: 'Not found' });
+    if (nom) account.nom = nom;
+    if (password) {
+      // Typically hash in real app
+      account.password = password;
+    }
+    await account.save();
+    res.json(account);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Weeks API
 app.get('/api/weeks', async (req, res) => {
   try {
@@ -215,44 +233,112 @@ app.get('/api/articles/:id', async (req, res) => {
   }
 });
 
-// Chat API - proxies to OpenAI (requires OPENAI_API_KEY in .env)
+// Use the Google Gemini API SDK
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+// Chat API - powered by Gemini (requires GEMINI_API_KEY in .env)
 app.post('/api/chat', async (req, res) => {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return res.status(503).json({
-      reply: "L'assistant de grossesse n'est pas encore configuré. Veuillez ajouter OPENAI_API_KEY à l'environnement du serveur.",
+      reply: "L'assistant de grossesse n'est pas encore configuré. Veuillez ajouter GEMINI_API_KEY à l'environnement du serveur.",
     });
   }
+
   try {
-    const { message, history = [], userId } = req.body;
+    const { message, userId } = req.body;
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Message required' });
     }
-    const messages = [
-      { role: 'system', content: 'Vous êtes un assistant de grossesse amical et utile. Répondez aux questions sur la grossesse, les symptômes, la nutrition, le développement du bébé et les soins prénataux généraux. Soyez d\'un grand soutien et fournissez des informations précises et fondées sur des preuves. En cas de doute, recommandez de consulter un professionnel de la santé. Répondez toujours en français.' },
-      ...history.slice(-10).map((m) => ({ role: m.role, content: m.content })),
-      { role: 'user', content: message },
+
+    // --- Safety Layer ---
+    const lowerMessage = message.toLowerCase();
+    const emergencyKeywords = [
+      'saignement', 'saignements', 'douleur intense', 'perte de connaissance', 
+      'urgence', 'fièvre élevée', 'emergency', 'bleeding', 'severe pain', 
+      'fever', 'contract', 'contractions', 'évanouissement'
     ];
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages,
-        max_tokens: 500,
-      }),
-    });
-    const data = await response.json();
-    if (data.error) {
-      return res.status(500).json({ reply: data.error.message || 'AI error' });
+    
+    // Check if any emergency keyword is in the message
+    const hasEmergency = emergencyKeywords.some(keyword => lowerMessage.includes(keyword));
+    
+    if (hasEmergency) {
+      if (userId) {
+        // Log the interaction even if it triggered safety
+        await ChatHistory.create([
+          { userId, role: 'user', content: message },
+          { userId, role: 'assistant', content: "Please go to a doctor immediately" }
+        ]);
+      }
+      return res.json({ reply: "Please go to a doctor immediately" });
     }
-    const reply = data.choices?.[0]?.message?.content || 'Désolé, je ne peux pas répondre.';
+
+    // --- Retrieve History ---
+    let dbHistory = [];
     if (userId) {
-      await ChatHistory.create([{ userId, role: 'user', content: message }, { userId, role: 'assistant', content: reply }]);
+      dbHistory = await ChatHistory.find({ userId })
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .lean(); // get plain JS objects
+      
+      // MongoDB sorts descending (latest first). Reverse to oldest first
+      dbHistory = dbHistory.reverse();
+    } else if (req.body.history) {
+      // Fallback for anonymous users if history passed in body
+      dbHistory = req.body.history.slice(-10);
     }
+
+    // Format history for Gemini API -> format needed: { role: "user" | "model", parts: [{ text: "..." }] }
+    // Gemini roles: "user", "model"
+    const formattedHistory = dbHistory.map(m => {
+      // Map API 'assistant' role to Gemini's 'model'
+      const geminiRole = (m.role === 'assistant' || m.role === 'model') ? 'model' : 'user';
+      return {
+        role: geminiRole,
+        parts: [{ text: m.content }]
+      };
+    });
+
+    // Determine the user message role (needed to ensure no consecutive same-role messages if history is mismatched)
+    // Actually, for generateContent, we pass history in startChat
+    
+    // Initialize Gemini API
+    const genAI = new GoogleGenerativeAI(apiKey);
+    
+    const systemInstruction = 
+      `Tu es l'assistant IA exclusif et expert de notre application de grossesse.
+Tâches autorisées :
+- Répondre aux questions sur la grossesse.
+- Donner des conseils hebdomadaires.
+- Répondre aux symptômes (sans poser de diagnostic définitif).
+- Fournir des rappels de santé ou de rendez-vous.
+
+Si l'utilisateur pose une question risquée, hors de ce champ (ex: "Quelle est la météo ?"), ou qui frôle un diagnostic sérieux, décline poliment et conseille de consulter un spécialiste. Limite strictement toutes tes réponses à la grossesse. Réponds toujours en français.`;
+
+    // Use Gemini 2.5 Flash
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.5-flash",
+      systemInstruction,
+    });
+
+    // To use history, we start a chat session.
+    // Ensure history messages have valid alternating format, but standard startChat accepts history array:
+    const chat = model.startChat({
+      history: formattedHistory,
+    });
+
+    // Generate response for the final newly drafted user message
+    const result = await chat.sendMessage(message);
+    const reply = result.response.text() || 'Désolé, je ne peux pas répondre pour le moment.';
+
+    // Save history
+    if (userId) {
+      await ChatHistory.create([
+        { userId, role: 'user', content: message },
+        { userId, role: 'assistant', content: reply }
+      ]);
+    }
+
     res.json({ reply });
   } catch (err) {
     console.error('Chat error:', err);

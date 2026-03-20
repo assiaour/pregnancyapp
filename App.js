@@ -15,19 +15,28 @@ import CreateAccountStep8Screen from './screens/CreateAccountStep8Screen';
 import AccountScreen from './screens/AccountScreen';
 import GmailSignInScreen from './screens/GmailSignInScreen';
 import MainTabs from './navigation/MainTabs';
+import { useUser } from './context/UserContext';
+import { ActivityIndicator, View } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+function RootNavigator() {
+  const { user, hydrating } = useUser();
+  if (hydrating) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F0FA' }}>
+        <ActivityIndicator size="large" color="#7B68B8" />
+      </View>
+    );
+  }
+
   return (
-    <UserProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Home"
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
+    <Stack.Navigator
+      initialRouteName={user ? 'MainTabs' : 'Home'}
+      screenOptions={{ headerShown: false }}
+    >
+      {!user ? (
+        <>
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
@@ -38,10 +47,23 @@ export default function App() {
           <Stack.Screen name="CreateAccountStep6" component={CreateAccountStep6Screen} />
           <Stack.Screen name="CreateAccountStep7" component={CreateAccountStep7Screen} />
           <Stack.Screen name="CreateAccountStep8" component={CreateAccountStep8Screen} />
+          <Stack.Screen name="GmailSignIn" component={GmailSignInScreen} />
+        </>
+      ) : (
+        <>
           <Stack.Screen name="MainTabs" component={MainTabs} />
           <Stack.Screen name="Account" component={AccountScreen} />
-          <Stack.Screen name="GmailSignIn" component={GmailSignInScreen} />
-        </Stack.Navigator>
+        </>
+      )}
+    </Stack.Navigator>
+  );
+}
+
+export default function App() {
+  return (
+    <UserProvider>
+      <NavigationContainer>
+        <RootNavigator />
       </NavigationContainer>
     </UserProvider>
   );

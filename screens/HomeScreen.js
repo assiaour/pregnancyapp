@@ -8,11 +8,9 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useUser } from '../context/UserContext';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
-  const { login } = useUser();
 
   const handleCreateAccount = () => {
     navigation.navigate('CreateAccount');
@@ -20,11 +18,6 @@ export default function HomeScreen() {
 
   const handleLogin = () => {
     navigation.navigate('Login');
-  };
-
-  const handleContinueToApp = () => {
-    login('demo@test.com', '01/09/2024', 27);
-    navigation.replace('MainTabs');
   };
 
   return (
@@ -41,7 +34,7 @@ export default function HomeScreen() {
 
         {/* Message */}
         <Text style={styles.message}>
-          Welcome to Your Pregnancy Journey
+          Bienvenue dans votre parcours de grossesse
         </Text>
 
         {/* Buttons */}
@@ -51,7 +44,7 @@ export default function HomeScreen() {
             onPress={handleCreateAccount}
             activeOpacity={0.8}
           >
-            <Text style={styles.buttonText}>Create Account</Text>
+            <Text style={styles.buttonText}>Créer un compte</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -59,15 +52,7 @@ export default function HomeScreen() {
             onPress={handleLogin}
             activeOpacity={0.8}
           >
-            <Text style={[styles.buttonText, styles.loginButtonText]}>Login</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.demoButton]}
-            onPress={handleContinueToApp}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.buttonText, styles.demoButtonText]}>Continue to App (Demo)</Text>
+            <Text style={[styles.buttonText, styles.loginButtonText]}>Connexion</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -130,18 +115,6 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     color: '#1A1824',
-  },
-  demoButton: {
-    backgroundColor: '#EDECF9',
-    marginTop: 16,
-    shadowOpacity: 0,
-    elevation: 0,
-    borderWidth: 2,
-    borderColor: '#D4C8E8',
-  },
-  demoButtonText: {
-    color: '#8A8696',
-    fontWeight: '600',
   },
   buttonText: {
     color: '#FFFFFF',

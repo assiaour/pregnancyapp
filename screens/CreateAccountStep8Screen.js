@@ -71,8 +71,8 @@ export default function CreateAccountStep8Screen() {
   };
 
   const goToApp = () => {
-    login(payload.mail, payload.ddr, payload.semaineGrossesse);
-    navigation.replace('MainTabs');
+    // React Navigation will automatically switch to the logged-in stack when user state updates
+    login(payload.mail, payload.ddr, payload.semaineGrossesse, payload.nom);
   };
 
   if (created) {

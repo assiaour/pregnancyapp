@@ -148,19 +148,19 @@ export default function GmailSignInScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.successContainer}>
-          <Text style={styles.successTitle}>Signed in with Google</Text>
+          <Text style={styles.successTitle}>Connecté avec Google</Text>
           <View style={styles.userCard}>
             <Text style={styles.userName}>{user.name}</Text>
             <Text style={styles.userEmail}>{user.email}</Text>
           </View>
           <Text style={styles.hint}>
-            You can now use this account in the app. In a real app you would save this and create a session.
+            Vous pouvez maintenant utiliser ce compte dans l'application. Dans une vraie application, vous l'enregistreriez et créeriez une session.
           </Text>
           <TouchableOpacity
             style={styles.primaryButton}
             onPress={() => navigation.navigate('Home')}
           >
-            <Text style={styles.primaryButtonText}>Continue to app</Text>
+            <Text style={styles.primaryButtonText}>Continuer vers l'application</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -171,9 +171,9 @@ export default function GmailSignInScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.content}>
-          <Text style={styles.title}>Continue with Gmail</Text>
+          <Text style={styles.title}>Continuer avec Gmail</Text>
           <Text style={styles.subtitle}>
-            Sign in with your Google account. We'll get your name and email from Google—no password needed.
+            Connectez-vous avec votre compte Google. Nous obtiendrons votre nom et votre e-mail depuis Google, sans avoir besoin de mot de passe.
           </Text>
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
@@ -187,7 +187,7 @@ export default function GmailSignInScreen() {
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.gmailButtonText}>Sign in with Google</Text>
+              <Text style={styles.gmailButtonText}>Se connecter avec Google</Text>
             )}
           </TouchableOpacity>
 
@@ -205,11 +205,11 @@ export default function GmailSignInScreen() {
           </View>
 
           <TouchableOpacity style={styles.simulateButton} onPress={handleSimulate}>
-            <Text style={styles.simulateButtonText}>Simulate sign-in (for testing)</Text>
+            <Text style={styles.simulateButtonText}>Simuler la connexion (pour les tests)</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Text style={styles.backButtonText}>← Back to Home</Text>
+            <Text style={styles.backButtonText}>← Retour à l'accueil</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

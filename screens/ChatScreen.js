@@ -48,7 +48,7 @@ export default function ChatScreen() {
     } catch (e) {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: "Je rencontre des problèmes de connexion. Veuillez vérifier votre connexion Internet et réessayer. (Le chatbot nécessite OPENAI_API_KEY sur le serveur)" },
+        { role: 'assistant', content: "Je rencontre des problèmes de connexion. Veuillez vérifier que le serveur est bien démarré, et que votre connexion Internet/Locale fonctionne." },
       ]);
     } finally {
       setLoading(false);
