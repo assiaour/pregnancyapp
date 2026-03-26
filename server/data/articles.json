@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Foods to Avoid During Pregnancy",
+    "content": "During pregnancy, avoid raw or undercooked meat, eggs, and fish. Unpasteurized dairy and deli meats can harbor harmful bacteria. Limit caffeine intake and avoid alcohol completely. Some fish high in mercury (like swordfish) should be avoided. Always wash fruits and vegetables thoroughly.",
+    "category": "Nutrition",
+    "week": 8,
+    "image": "",
+    "source": "seed.js"
+  },
+  {
+    "title": "Managing Morning Sickness",
+    "content": "Morning sickness affects many pregnant women. Eat small, frequent meals throughout the day. Avoid an empty stomach. Ginger, crackers, and cold foods often help. Stay hydrated. If symptoms are severe, consult your doctor about safe medications.",
+    "category": "Symptoms",
+    "week": 10,
+    "image": "",
+    "source": "seed.js"
+  },
+  {
+    "title": "Mental Health During Pregnancy",
+    "content": "Pregnancy can bring a mix of emotions. Anxiety and mood changes are common. Talk to your partner, friends, or a healthcare provider. Rest and self-care matter. If you feel persistently sad or anxious, seek support. You are not alone.",
+    "category": "Mental health",
+    "week": 20,
+    "image": "",
+    "source": "seed.js"
+  }
+]
+

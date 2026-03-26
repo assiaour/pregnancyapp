@@ -121,7 +121,7 @@ export default function WeekDetailsScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Text style={styles.backBtnText}>← Outils</Text>
+          <Text style={styles.backBtnText}>← Retour</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Guide des tailles</Text>
         <View style={{ width: 60 }} />
@@ -171,7 +171,11 @@ export default function WeekDetailsScreen() {
           setSelectedWeek(w);
         }}
         renderItem={({ item }) => (
-          <View style={[styles.slide, { width }]}>
+          <ScrollView
+            style={{ width }}
+            contentContainerStyle={styles.slide}
+            showsVerticalScrollIndicator={false}
+          >
             <View style={styles.card}>
               <View style={styles.slideImage}>
                 {FETAL_IMAGES[item.week] ? (
@@ -186,7 +190,7 @@ export default function WeekDetailsScreen() {
                     <Image
                       source={FETAL_IMAGES[item.week]}
                       style={styles.fruitImage}
-                      resizeMode="contain"
+                      resizeMode="cover"
                     />
                   </ScrollView>
                 ) : (
@@ -212,7 +216,7 @@ export default function WeekDetailsScreen() {
                 )}
               </View>
             </View>
-          </View>
+          </ScrollView>
         )}
       />
     </SafeAreaView>
@@ -293,7 +297,7 @@ const styles = StyleSheet.create({
   },
   slideImage: {
     width: '100%',
-    aspectRatio: 4 / 3,
+    aspectRatio: 1.15,
     borderRadius: 24,
     backgroundColor: '#F7F6FB',
     justifyContent: 'center',

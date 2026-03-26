@@ -48,7 +48,7 @@ export default function ChatScreen() {
     } catch (e) {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: "Je rencontre des problèmes de connexion. Veuillez vérifier que le serveur est bien démarré, et que votre connexion Internet/Locale fonctionne." },
+        { role: 'assistant', content: e?.message || "Je rencontre des problèmes de connexion." },
       ]);
     } finally {
       setLoading(false);
