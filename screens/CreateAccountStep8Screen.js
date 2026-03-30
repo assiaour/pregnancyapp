@@ -92,7 +92,7 @@ export default function CreateAccountStep8Screen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.primaryButton, styles.secondaryButton]}
-              onPress={() => navigation.navigate('Account', { email: payload.mail })}
+              onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })}
             >
               <Text style={styles.secondaryButtonText}>Voir mon compte</Text>
             </TouchableOpacity>

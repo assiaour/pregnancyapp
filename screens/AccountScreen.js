@@ -3,12 +3,12 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
   TextInput,
 } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -368,11 +368,11 @@ export default function AccountScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#EDECF9' },
   scrollContent: {
-    paddingBottom: 28,
+    paddingBottom: 100,
   },
   headerContainer: {
     paddingHorizontal: 24,
-    paddingTop: 12,
+    paddingTop: 4,
     paddingBottom: 24,
   },
   title: {

@@ -5,19 +5,30 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  SafeAreaView,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { useUser } from '../context/UserContext';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+  const { user } = useUser();
 
   const handleCreateAccount = () => {
     navigation.navigate('CreateAccount');
   };
 
   const handleLogin = () => {
-    navigation.navigate('Login');
+    if (user) {
+      navigation.navigate('MainTabs', { screen: 'Home' });
+    } else {
+      navigation.navigate('Login');
+    }
   };
 
   return (

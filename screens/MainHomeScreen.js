@@ -5,10 +5,10 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   ActivityIndicator,
   Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../context/UserContext';
 import { getWeek, getTipOfDay, getArticleOfDay } from '../api';
@@ -102,7 +102,7 @@ export default function MainHomeScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.center}>
-          <Text style={styles.loadingText}>Chargement...</Text>
+          <ActivityIndicator size="large" color="#9A75F0" />
         </View>
       </SafeAreaView>
     );
@@ -116,7 +116,7 @@ export default function MainHomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <View style={styles.headerContainer}>
         <View style={styles.profileSection}>
@@ -124,14 +124,6 @@ export default function MainHomeScreen() {
             <Text style={styles.profileInitials}>{user?.firstName?.[0] || 'D'}</Text>
           </TouchableOpacity>
             <Text style={styles.helloText}>Bonjour, {user?.firstName || 'Utilisateur'}</Text>
-        </View>
-        <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.iconPlaceholder}>
-            <Text style={styles.iconText}>🔍</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconPlaceholder}>
-            <Text style={styles.iconText}>🔔</Text>
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -221,9 +213,9 @@ export default function MainHomeScreen() {
               <View style={styles.toolIconWrapper}>
                 <Text style={styles.toolIcon}>⭐</Text>
               </View>
-              <Text style={styles.toolTitle}>Détails de{'\n'}la semaine</Text>
+              <Text style={styles.toolTitle}>Taille des{'\n'}fœtus</Text>
             </TouchableOpacity>
-
+ 
             <TouchableOpacity
               style={styles.toolSquare}
               onPress={() => navigation.getParent()?.navigate('Tools', { screen: 'BabySize' })}
@@ -232,7 +224,7 @@ export default function MainHomeScreen() {
               <View style={styles.toolIconWrapper}>
                 <Text style={styles.toolIcon}>📊</Text>
               </View>
-              <Text style={styles.toolTitle}>Guide des{'\n'}tailles</Text>
+              <Text style={styles.toolTitle}>Comparaison de{'\n'}tailles</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -330,7 +322,9 @@ const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { marginTop: 12, color: '#9A75F0', fontWeight: 'bold' },
   scroll: { flex: 1 },
-  scrollContent: { paddingBottom: 60 },
+  scrollContent: {
+    paddingBottom: 100,
+  },
 
   // Header
   headerContainer: {
@@ -338,8 +332,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 24,
+    paddingTop: 4,
+    paddingBottom: 16,
   },
   profileSection: {
     flexDirection: 'row',
@@ -366,23 +360,7 @@ const styles = StyleSheet.create({
   },
   headerIcons: {
     flexDirection: 'row',
-  },
-  iconPlaceholder: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 12,
-    shadowColor: '#8C72FF',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  iconText: {
-    fontSize: 16,
+    display: 'none',
   },
 
   // Main Balance Area (Current Week)

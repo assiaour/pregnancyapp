@@ -3,18 +3,18 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
-  SafeAreaView,
+  ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function ToolsScreen() {
   const navigation = useNavigation();
 
   const tools = [
-    { id: 'WeekDetails', title: 'Développement du bébé', subtitle: 'Carousel semaine par semaine', icon: '👶' },
-    { id: 'BabySize', title: 'Taille du bébé', subtitle: 'Comparaison avec des fruits', icon: '📏' },
+    { id: 'WeekDetails', title: 'Taille des fœtus', subtitle: 'Carousel semaine par semaine', icon: '👶' },
+    { id: 'BabySize', title: 'Comparaison des tailles', subtitle: 'Comparaison avec des fruits', icon: '📏' },
     { id: 'Calculator', title: 'Calculatrice de grossesse', subtitle: 'Semaine, terme, trimestre', icon: '🧮' },
     { id: 'SymptomChecker', title: 'Vérificateur de symptômes', subtitle: 'Obtenez des recommandations', icon: '🩺' },
   ];
@@ -51,17 +51,20 @@ export default function ToolsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#EDECF9' },
-  scroll: { padding: 24, paddingBottom: 60 },
   headerContainer: {
-    marginBottom: 32,
-    marginTop: 12,
+    paddingHorizontal: 24,
+    paddingTop: 4,
+    paddingBottom: 16,
   },
   title: {
     fontSize: 28,
     fontWeight: '800',
     color: '#1A1824',
-    marginBottom: 8,
     letterSpacing: -0.5,
+  },
+  scrollContent: {
+    padding: 24,
+    paddingBottom: 100,
   },
   subtitle: {
     fontSize: 16,

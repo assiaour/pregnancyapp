@@ -87,9 +87,16 @@ export default function WeekDetailsScreen() {
 
   const data = weeks.length > 0 ? weeks : Array.from({ length: 40 }, (_, i) => ({
     week: i + 1,
-    fruit: ['Graine de pavot', 'Sésame', 'Myrtille', 'Framboise', 'Citron vert', 'Prune', 'Fraise', 'Citron', 'Cerise', 'Fraise',
-      'Figue', 'Citron vert', 'Pêche', 'Citron', 'Pomme', 'Avocat', 'Poire', 'Patate douce', 'Mangue', 'Banane',
-      'Carotte', 'Papaye', 'Pamplemousse', 'Cantaloup', 'Chou-fleur', 'Laitue', 'Chou', 'Noix de coco', 'Courge musquée', 'Chou'][i] || 'Bébé',
+    fruit: [
+      'Graine de pavot', 'Graine de pavot', 'Graine de pavot', 'Graine de pavot', // W1-4
+      'Sésame', 'Lentille', 'Myrtille', 'Framboise', 'Raisin', 'Fraise', // W5-10
+      'Figue', 'Citron vert', 'Prune', 'Citron', 'Citron', // W11-15 (Fix 15: Citron)
+      'Pomme', 'Avocat', 'Poivron', 'Grenade', 'Banane', // W16-20
+      'Mangue', 'Patate douce', 'Pamplemousse', 'Épi de maïs', 'Courge poivrée', // W21-25
+      'Courge spaghetti', 'Chou-fleur', 'Aubergine', 'Courge musquée', 'Chou', // W26-30
+      'Noix de coco', 'Papaye', 'Ananas', 'Cantaloup', 'Melon miel', 'Laitue', // W31-36
+      'Blette', 'Mini pastèque', 'Citrouille', 'Pastèque' // W37-40
+    ][i] || 'Bébé',
     size_cm: Math.min(2 + i * 1.2, 52),
     weight_g: Math.min(14 + i * 50, 3500),
     development: `Semaine ${i + 1}: Étapes de développement du bébé. Formation des organes, la croissance continue.`,
@@ -123,7 +130,7 @@ export default function WeekDetailsScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backBtnText}>← Retour</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Guide des tailles</Text>
+        <Text style={styles.headerTitle}>Taille des fœtus par semaine</Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -225,6 +232,23 @@ export default function WeekDetailsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#EDECF9' },
+  headerContainer: {
+    paddingHorizontal: 24,
+    paddingTop: 4,
+    paddingBottom: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#1A1824',
+    letterSpacing: -0.5,
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
+  },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header: {
     flexDirection: 'row',

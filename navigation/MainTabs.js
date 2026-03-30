@@ -62,6 +62,7 @@ const tabIcon = (emoji, isFocused) => (
 export default function MainTabs() {
   return (
     <Tab.Navigator
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: '#9A75F0',
@@ -74,9 +75,8 @@ export default function MainTabs() {
           shadowOffset: { width: 0, height: -4 },
           shadowOpacity: 0.1,
           shadowRadius: 16,
-          height: 64,
-          paddingBottom: 8,
-          paddingTop: 8,
+          height: 85,
+          paddingBottom: 30,
         },
         tabBarLabelStyle: {
           fontSize: 12,
@@ -112,7 +112,7 @@ export default function MainTabs() {
         name="Chat"
         component={ChatScreen}
         options={{
-          tabBarLabel: 'Assistant',
+          tabBarLabel: 'Chat',
           tabBarIcon: ({ focused }) => tabIcon('💬', focused)
         }}
       />
@@ -120,7 +120,7 @@ export default function MainTabs() {
         name="Profile"
         component={AccountScreen}
         options={{
-          tabBarLabel: 'Profil',
+          tabBarLabel: 'Compte',
           tabBarIcon: ({ focused }) => tabIcon('👤', focused)
         }}
       />

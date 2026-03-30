@@ -5,9 +5,9 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getArticles } from '../api';
 
@@ -27,12 +27,6 @@ export default function ArticlesScreen() {
       .catch(() => setArticles([]))
       .finally(() => setLoading(false));
   }, [category]);
-
-  const data = articles.length > 0 ? articles : [
-    { _id: '1', title: 'Aliments à éviter pendant la grossesse', content: 'Découvrez quels aliments éviter...', category: 'Nutrition' },
-    { _id: '2', title: 'Gérer les nausées matinales', content: 'Conseils pour gérer les nausées...', category: 'Symptômes' },
-    { _id: '3', title: 'Développement du premier trimestre', content: 'Ce qui se passe de la semaine 1 à 12...', category: 'Développement du bébé' },
-  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -61,11 +55,11 @@ export default function ArticlesScreen() {
         <View style={styles.center}>
           <ActivityIndicator size="large" color="#9A75F0" />
         </View>
-      ) : (
+      ) : articles.length > 0 ? (
         <FlatList
-          data={data}
+          data={articles}
           keyExtractor={(item) => item._id || item.id || String(Math.random())}
-          contentContainerStyle={styles.list}
+          contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.card}
@@ -73,13 +67,19 @@ export default function ArticlesScreen() {
               activeOpacity={0.8}
             >
               <View style={styles.cardCategoryBadge}>
-                <Text style={styles.cardCategory}>{item.category}</Text>
+                <Text style={styles.cardCategory}>{item.category || 'Information'}</Text>
               </View>
               <Text style={styles.cardTitle}>{item.title}</Text>
               <Text style={styles.cardPreview} numberOfLines={2}>{item.content}</Text>
             </TouchableOpacity>
           )}
         />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyIcon}>📚</Text>
+          <Text style={styles.emptyText}>Aucun article trouvé pour le moment.</Text>
+          <Text style={styles.emptySubtext}>Revenez plus tard pour de nouveaux conseils !</Text>
+        </View>
       )}
     </SafeAreaView>
   );
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#EDECF9' },
   headerContainer: {
     paddingHorizontal: 24,
-    paddingTop: 12,
+    paddingTop: 4,
     paddingBottom: 16,
   },
   title: {
@@ -153,5 +153,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#8A8696',
     lineHeight: 20,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+    paddingBottom: 100,
+  },
+  emptyIcon: {
+    fontSize: 64,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1A1824',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: '#8A8696',
+    textAlign: 'center',
   },
 });

@@ -6,15 +6,15 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { useUser } from '../context/UserContext';
 import { chat } from '../api';
 
-const BOTTOM_PADDING = 100;
+const BOTTOM_PADDING = 120;
 
 export default function ChatScreen() {
   const { user } = useUser();
@@ -36,14 +36,22 @@ export default function ChatScreen() {
     if (!text || loading) return;
 
     setInput('');
+    // Build history using the user's message as well (don't rely on async state updates).
+    const nextMessages = [...messages, { role: 'user', content: text }];
     setMessages((prev) => [...prev, { role: 'user', content: text }]);
     setLoading(true);
 
     try {
-      const history = messages
+      const allHistory = nextMessages
         .filter((m) => m.role === 'user' || m.role === 'assistant')
         .map((m) => ({ role: m.role, content: m.content }));
-      const res = await chat(text, history, user?.email || 'guest');
+      
+      // Gemini requires the first message in the history block to be from the 'user'
+      const firstUserIndex = allHistory.findIndex(m => m.role === 'user');
+      const history = firstUserIndex !== -1 ? allHistory.slice(firstUserIndex) : [];
+
+      // If user is not logged in, pass `undefined` so the server uses `history` from the request body.
+      const res = await chat(text, history, user?.email);
       setMessages((prev) => [...prev, { role: 'assistant', content: res.reply || res.message || 'Désolé, je ne peux pas répondre.' }]);
     } catch (e) {
       setMessages((prev) => [
@@ -56,7 +64,7 @@ export default function ChatScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Assistant de Grossesse</Text>
         <Text style={styles.headerSubtitle}>Posez vos questions sur la grossesse</Text>
@@ -77,7 +85,7 @@ export default function ChatScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-        style={styles.inputRow}
+        style={[styles.inputRow, { paddingBottom: 8 }]}
       >
         <TextInput
           style={styles.input}
@@ -149,7 +157,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     padding: 16,
-    paddingBottom: Platform.OS === 'ios' ? 32 : 16,
     backgroundColor: '#FFFFFF',
     shadowColor: '#8C72FF',
     shadowOffset: { width: 0, height: -8 },

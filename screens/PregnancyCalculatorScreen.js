@@ -5,9 +5,9 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { parseDate, weeksAndDaysFromDDR, dueDateFromDDR, trimesterFromWeek } from '../utils/pregnancy';
 import { useNavigation } from '@react-navigation/native';
 

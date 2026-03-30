@@ -4,25 +4,25 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   ActivityIndicator,
   Image,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getAllWeeks } from '../api';
 
 const FRUIT_MAP = {
   4: 'Graine de pavot', 5: 'Graine de sésame', 6: 'Lentille', 7: 'Myrtille', 8: 'Framboise', 9: 'Raisin',
-  10: 'Fraise', 11: 'Figue', 12: 'Citron vert', 13: 'Prune', 14: 'Citron', 15: 'Pomme',
-  16: 'Avocat', 17: 'Navet', 18: 'Poivron', 19: 'Grenade', 20: 'Banane',
+  10: 'Fraise', 11: 'Figue', 12: 'Citron vert', 13: 'Prune', 14: 'Citron', 15: 'Citron',
+  16: 'Pomme', 17: 'Avocat', 18: 'Poivron', 19: 'Grenade', 20: 'Banane',
   21: 'Mangue', 22: 'Patate douce', 23: 'Pamplemousse', 24: 'Épi de maïs', 25: 'Courge poivrée',
   26: 'Courge spaghetti', 27: 'Chou-fleur', 28: 'Aubergine', 29: 'Courge musquée', 30: 'Chou',
   31: 'Noix de coco', 32: 'Papaye', 33: 'Ananas', 34: 'Cantaloup', 35: 'Melon miel', 36: 'Laitue',
   37: 'Blette', 38: 'Mini pastèque', 39: 'Citrouille', 40: 'Pastèque',
 };
 
-// Fruit dev images mapping
+// Fruit dev images mapping aligned with assets
 const FRUIT_IMAGES = {
   1: require('../assets/4-weeks-poppy-seeds_4x3.jpg'),
   2: require('../assets/4-weeks-poppy-seeds_4x3.jpg'),
@@ -37,7 +37,7 @@ const FRUIT_IMAGES = {
   11: require('../assets/11-weeks-fig_4x3.jpg'),
   12: require('../assets/12-weeks-lime_4x3.jpg'),
   13: require('../assets/13-weeks-plum_4x3.jpg'),
-  14: require('../assets/15-weeks-lemon_4x3.jpg'), // missing 14
+  14: require('../assets/15-weeks-lemon_4x3.jpg'), 
   15: require('../assets/15-weeks-lemon_4x3.jpg'),
   16: require('../assets/16-weeks-apple_4x3.jpg'),
   17: require('../assets/17-weeks-avocado_4x3.jpg'),
@@ -106,7 +106,7 @@ export default function BabySizeScreen() {
       </View>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.headerContainer}>
-          <Text style={styles.title}>Taille de bébé</Text>
+          <Text style={styles.title}>Comparaison des tailles</Text>
           <Text style={styles.subtitle}>Comparaison semaine par semaine</Text>
         </View>
 

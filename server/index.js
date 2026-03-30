@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,10 +10,23 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+const geminiKeyFingerprint = (key) => {
+  if (!key || typeof key !== 'string') return null;
+  return crypto.createHash('sha256').update(key).digest('hex').slice(0, 12);
+};
+
 // MongoDB connection (use MONGODB_URI from env - Atlas or Render add-on)
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/pregnancy-app';
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log('MongoDB connected'))
+  .then(() => {
+    console.log('MongoDB connected');
+    if (process.env.GEMINI_API_KEY) {
+      console.log('GEMINI_API_KEY detected: YES');
+      console.log('GEMINI_API_KEY fingerprint:', geminiKeyFingerprint(process.env.GEMINI_API_KEY));
+    } else {
+      console.warn('GEMINI_API_KEY detected: NO (Chatbot functionality will be disabled)');
+    }
+  })
   .catch((err) => console.error('MongoDB connection error:', err));
 
 // Schema for account data collected in the app (steps 1–8)
@@ -117,6 +131,8 @@ app.get('/health', (req, res) => {
   res.json({
     ok: true,
     mongo: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    geminiKey: process.env.GEMINI_API_KEY ? 'present' : 'missing',
+    geminiKeyFp: geminiKeyFingerprint(process.env.GEMINI_API_KEY),
   });
 });
 
@@ -251,6 +267,12 @@ app.post('/api/chat', async (req, res) => {
       return res.status(400).json({ error: 'Message required' });
     }
 
+    console.log('[/api/chat] hit local server', {
+      userId: userId ? String(userId).slice(0, 30) : null,
+      historyLen: Array.isArray(req.body.history) ? req.body.history.length : null,
+      messagePreview: message.slice(0, 40),
+    });
+
     // --- Safety Layer ---
     const lowerMessage = message.toLowerCase();
     const emergencyKeywords = [
@@ -288,16 +310,24 @@ app.post('/api/chat', async (req, res) => {
       dbHistory = req.body.history.slice(-10);
     }
 
-    // Format history for Gemini API -> format needed: { role: "user" | "model", parts: [{ text: "..." }] }
-    // Gemini roles: "user", "model"
-    const formattedHistory = dbHistory.map(m => {
-      // Map API 'assistant' role to Gemini's 'model'
-      const geminiRole = (m.role === 'assistant' || m.role === 'model') ? 'model' : 'user';
-      return {
-        role: geminiRole,
-        parts: [{ text: m.content }]
-      };
-    });
+    // Format history for Gemini API -> format needed:
+    // { role: "user" | "model", parts: [{ text: "..." }] }
+    // Gemini is strict about role alternation, so we also sanitize/clean the input.
+    const formattedHistory = dbHistory
+      .map(m => {
+        const geminiRole = (m.role === 'assistant' || m.role === 'model') ? 'model' : 'user';
+        return {
+          role: geminiRole,
+          parts: [{ text: String(m.content ?? '') }],
+        };
+      })
+      .filter(
+        (m) =>
+          (m.role === 'user' || m.role === 'model') &&
+          Array.isArray(m.parts) &&
+          typeof m.parts?.[0]?.text === 'string' &&
+          m.parts[0].text.trim().length > 0
+      );
 
     // Determine the user message role (needed to ensure no consecutive same-role messages if history is mismatched)
     // Actually, for generateContent, we pass history in startChat
@@ -315,20 +345,110 @@ Tâches autorisées :
 
 Si l'utilisateur pose une question risquée, hors de ce champ (ex: "Quelle est la météo ?"), ou qui frôle un diagnostic sérieux, décline poliment et conseille de consulter un spécialiste. Limite strictement toutes tes réponses à la grossesse. Réponds toujours en français.`;
 
-    // Use Gemini 2.5 Flash
+    // Use Gemini 2.0 Flash
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       systemInstruction,
     });
 
     // To use history, we start a chat session.
-    // Ensure history messages have valid alternating format, but standard startChat accepts history array:
-    const chat = model.startChat({
-      history: formattedHistory,
-    });
+    // Gemini is extremely strict: history MUST (1) start with 'user' and (2) strictly alternate roles.
+    // Additionally, sendMessage expects history to end with 'model' so the new message can be 'user'.
+    let validatedHistory = [];
+    let lastRole = null;
 
-    // Generate response for the final newly drafted user message
-    const result = await chat.sendMessage(message);
+    for (const m of formattedHistory) {
+      if (lastRole === null) {
+        if (m.role === 'user') {
+          validatedHistory.push(m);
+          lastRole = 'user';
+        }
+      } else if (m.role !== lastRole) {
+        validatedHistory.push(m);
+        lastRole = m.role;
+      }
+    }
+
+    // Crucially, if the last message in history is a 'user' message,
+    // Gemini will fail because sendMessage adds ANOTHER user message.
+    // We must ensure the history ends with a 'model' message.
+    if (validatedHistory.length > 0 && validatedHistory[validatedHistory.length - 1].role === 'user') {
+      validatedHistory.pop(); // Remove the trailing user message so history ends with 'model'
+    }
+
+    // Extra safety: history MUST start with 'user'. If it doesn't, send no history at all.
+    if (validatedHistory.length > 0 && validatedHistory[0].role !== 'user') validatedHistory = [];
+
+    // Gemini is extremely strict about history shape:
+    // - starts with 'user'
+    // - alternates roles (user/model/user/model...)
+    // - ends with 'model' (so sendMessage can append a final 'user')
+    const roles = validatedHistory.map((m) => m.role);
+    const startsWithUser = roles.length > 0 ? roles[0] === 'user' : true;
+    const alternates = roles.every((r, i) => (i === 0 ? true : r !== roles[i - 1]));
+    const endsWithModel = roles.length > 0 ? roles[roles.length - 1] === 'model' : true;
+
+    const safeHistory =
+      validatedHistory.length > 0 && startsWithUser && alternates && endsWithModel ? validatedHistory : [];
+
+    const chat = safeHistory.length > 0 ? model.startChat({ history: safeHistory }) : model.startChat();
+
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const toText = (v) => (v == null ? '' : String(v));
+    const safeJsonParse = (s) => {
+      try {
+        return JSON.parse(s);
+      } catch {
+        return null;
+      }
+    };
+
+    const isRateLimitOrQuota = (err) => {
+      const status = err?.status || err?.response?.status || err?.response?.statusCode;
+      if (status === 429) return true;
+      const msg = toText(err?.message || err);
+      const lower = msg.toLowerCase();
+      if (lower.includes('429') || lower.includes('too many requests') || lower.includes('quota') || lower.includes('rate limit')) return true;
+      const parsed = safeJsonParse(msg);
+      const parsedStr = parsed ? JSON.stringify(parsed).toLowerCase() : '';
+      return parsedStr.includes('429') || parsedStr.includes('quota') || parsedStr.includes('rate');
+    };
+
+    const extractRetryDelayMs = (err) => {
+      const msg = toText(err?.message || err);
+      const parsed = safeJsonParse(msg);
+      const retryDelay =
+        parsed?.error?.details?.find?.((d) => d?.['@type']?.includes('RetryInfo'))?.retryDelay ||
+        parsed?.details?.find?.((d) => d?.['@type']?.includes('RetryInfo'))?.retryDelay;
+      if (typeof retryDelay === 'string') {
+        const m = retryDelay.match(/(\d+(?:\.\d+)?)s/i);
+        if (m) return Math.max(0, Math.round(parseFloat(m[1]) * 1000));
+      }
+      return null;
+    };
+
+    // Generate response (with retry for transient Gemini quota/rate-limit)
+    let lastErr = null;
+    let result = null;
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        result = await chat.sendMessage(message);
+        break;
+      } catch (err) {
+        lastErr = err;
+        if (!isRateLimitOrQuota(err) || attempt === maxAttempts) break;
+
+        const serverSuggested = extractRetryDelayMs(err);
+        const backoff = Math.min(60000, 1000 * Math.pow(2, attempt - 1)); // 1s, 2s, 4s (capped)
+        const waitMs = serverSuggested != null ? Math.max(serverSuggested, backoff) : backoff;
+        console.warn(`[/api/chat] Gemini rate-limit/quota. Retry ${attempt}/${maxAttempts} in ${waitMs}ms`);
+        await sleep(waitMs);
+      }
+    }
+
+    if (!result) throw lastErr || new Error('Gemini request failed');
+
     const reply = result.response.text() || 'Désolé, je ne peux pas répondre pour le moment.';
 
     // Save history
@@ -341,8 +461,51 @@ Si l'utilisateur pose une question risquée, hors de ce champ (ex: "Quelle est l
 
     res.json({ reply });
   } catch (err) {
+    const rawMsg = (err && (err.message || err.toString())) || 'Chat failed';
+    const msg = String(rawMsg);
+    const lower = msg.toLowerCase();
+
+    // Gemini quota / rate limit
+    if (
+      lower.includes('429') ||
+      lower.includes('too many requests') ||
+      lower.includes('quota') ||
+      lower.includes('rate limit')
+    ) {
+      console.error('Chat error (quota/rate-limit):', msg);
+      return res.status(429).json({
+        reply:
+          "Le chatbot est temporairement indisponible (quota Gemini dépassé). " +
+          "Veuillez réessayer plus tard ou ajoutez un compte Gemini avec facturation/quota actif.",
+        code: 'GEMINI_QUOTA_EXCEEDED',
+      });
+    }
+
+    // Misconfiguration
+    if (lower.includes('api key') || lower.includes('permission') || lower.includes('unauthorized')) {
+      console.error('Chat error (auth/config):', msg);
+      return res.status(503).json({
+        reply:
+          "Le chatbot n'est pas correctement configuré (clé Gemini invalide ou non autorisée). " +
+          "Vérifiez GEMINI_API_KEY et les permissions du projet.",
+        code: 'GEMINI_AUTH_ERROR',
+      });
+    }
+
+    // Never leak raw Gemini payloads to the client UI (they are huge and unreadable).
+    const looksLikeGeminiPayload =
+      lower.includes('generativelanguage.googleapis.com') ||
+      lower.includes('googlegenerativeai error') ||
+      lower.includes('generatecontent') ||
+      (msg.trim().startsWith('{') && msg.trim().endsWith('}'));
+
     console.error('Chat error:', err);
-    res.status(500).json({ reply: err.message || 'Chat failed' });
+    res.status(500).json({
+      reply: looksLikeGeminiPayload
+        ? "Désolé, le chatbot rencontre un problème temporaire. Réessayez dans quelques minutes."
+        : (msg || 'Chat failed'),
+      code: 'CHAT_FAILED',
+    });
   }
 });
 
