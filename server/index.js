@@ -346,8 +346,9 @@ Tâches autorisées :
 Si l'utilisateur pose une question risquée, hors de ce champ (ex: "Quelle est la météo ?"), ou qui frôle un diagnostic sérieux, décline poliment et conseille de consulter un spécialiste. Limite strictement toutes tes réponses à la grossesse. Réponds toujours en français.`;
 
     // Use Gemini 2.0 Flash
+    const modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash",
+      model: modelName,
       systemInstruction,
     });
 
