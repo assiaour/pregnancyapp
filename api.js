@@ -60,23 +60,48 @@ function fallbackUrl(path) {
 
 function shouldTryFallback(err) {
   const msg = (err && err.message ? err.message : '').toLowerCase();
-  return msg.includes('network request failed') || msg.includes('failed to fetch');
+  return (
+    msg.includes('network request failed') ||
+    msg.includes('failed to fetch') ||
+    msg.includes('timeout') ||
+    msg.includes('timed out') ||
+    msg.includes('aborted') ||
+    msg.includes('abort')
+  );
 }
 
-async function fetchWithFallback(path, options) {
+async function fetchWithFallback(path, options, timeoutMs = 10000) {
   try {
-    return await fetch(url(path), options);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url(path), { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(timeoutId);
+    }
   } catch (err) {
     if (!shouldTryFallback(err)) throw err;
     // In dev, retry local backends first (useful when debuggerHost/IP is wrong).
     for (const base of DEV_LOCAL_BASES) {
       try {
-        return await fetch(`${base.replace(/\/$/, '')}${path}`, options);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          return await fetch(`${base.replace(/\/$/, '')}${path}`, { ...options, signal: controller.signal });
+        } finally {
+          clearTimeout(timeoutId);
+        }
       } catch (_) {
         // try next
       }
     }
-    return fetch(fallbackUrl(path), options);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(fallbackUrl(path), { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 }
 
