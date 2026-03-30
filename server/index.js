@@ -255,6 +255,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 // Chat API - powered by Gemini (requires GEMINI_API_KEY in .env)
 app.post('/api/chat', async (req, res) => {
   const apiKey = process.env.GEMINI_API_KEY;
+  const modelName = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
   if (!apiKey) {
     return res.status(503).json({
       reply: "L'assistant de grossesse n'est pas encore configuré. Veuillez ajouter GEMINI_API_KEY à l'environnement du serveur.",
@@ -271,6 +272,7 @@ app.post('/api/chat', async (req, res) => {
       userId: userId ? String(userId).slice(0, 30) : null,
       historyLen: Array.isArray(req.body.history) ? req.body.history.length : null,
       messagePreview: message.slice(0, 40),
+      model: modelName,
     });
 
     // --- Safety Layer ---
@@ -345,8 +347,6 @@ Tâches autorisées :
 
 Si l'utilisateur pose une question risquée, hors de ce champ (ex: "Quelle est la météo ?"), ou qui frôle un diagnostic sérieux, décline poliment et conseille de consulter un spécialiste. Limite strictement toutes tes réponses à la grossesse. Réponds toujours en français.`;
 
-    // Use Gemini 2.0 Flash
-    const modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
     const model = genAI.getGenerativeModel({ 
       model: modelName,
       systemInstruction,
@@ -479,6 +479,7 @@ Si l'utilisateur pose une question risquée, hors de ce champ (ex: "Quelle est l
           "Le chatbot est temporairement indisponible (quota Gemini dépassé). " +
           "Veuillez réessayer plus tard ou ajoutez un compte Gemini avec facturation/quota actif.",
         code: 'GEMINI_QUOTA_EXCEEDED',
+        model: modelName,
       });
     }
 

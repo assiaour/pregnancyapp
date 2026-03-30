@@ -143,7 +143,9 @@ export async function chat(message, history = [], userId) {
 
     const friendly =
       res.status === 429 || data?.code === 'GEMINI_QUOTA_EXCEEDED'
-        ? "Le chatbot est temporairement indisponible (quota dépassé). Réessayez dans quelques minutes."
+        ? `Le chatbot est temporairement indisponible (quota dépassé${
+            data?.model ? ` - ${data.model}` : ''
+          }). Réessayez dans quelques minutes.`
         : looksLikeGeminiPayload
           ? "Désolé, le chatbot rencontre un problème temporaire. Réessayez dans quelques minutes."
           : rawStr || `Chat failed (${res.status})`;
